@@ -58,5 +58,5 @@ El proyecto cuenta con una capa de servicios inteligente que permite trabajar si
   - `VITE_USE_MOCK=true`: Usa datos falsos (Ideal para diseño/frontend).
   - `VITE_USE_MOCK=false`: Conecta con Spring Boot y Keycloak.
 
-> 📘 **Para el equipo de Backend:**
+> 📘 **Para Backend:**
 > Consultar la carpeta `/docs` para ver la guía de integración detallada y los contratos de datos esperados.
