@@ -1,120 +1,165 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, RefreshCw, Trophy, Play } from 'lucide-react';
-import { mockTasks } from '../mocks/tasks';
+import { ArrowLeft, Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
+import { studentService } from '../services/studentService';
 import { Badge } from '../components/ui/Badge';
+import type { Task } from '../types';
 
 export const TaskDetailPage = () => {
   const { taskId } = useParams();
   const navigate = useNavigate();
   
-  // Buscar la tarea en datos por default
-  const task = mockTasks.find(t => t.id === taskId);
+  const [task, setTask] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!task) {
-    return <div className="text-center py-20">Tarea no encontrada</div>;
-  }
+  // Cargar tarea individual
+  useEffect(() => {
+    const loadTask = async () => {
+      if (!taskId) return;
+      try {
+        setLoading(true);
+        const foundTask = await studentService.getTaskById(taskId);
+        setTask(foundTask || null);
+      } catch (error) {
+        console.error("Error cargando detalle:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTask();
+  }, [taskId]);
 
   const handleStartGame = () => {
-    // Navegar a la pantalla de juego (que crearemos en el siguiente paso)
-    navigate(`/game/${taskId}`);
+    if (task && task.status !== 'EXPIRED') {
+      navigate(`/game/${task.id}`);
+    }
   };
 
+  if (loading) return <div className="p-10 text-center">Cargando información de la misión...</div>;
+  
+  if (!task) return (
+    <div className="p-10 text-center">
+      <h2 className="text-xl font-bold text-gray-700">Misión no encontrada</h2>
+      <button onClick={() => navigate(-1)} className="text-brand-primary mt-4 underline">Volver</button>
+    </div>
+  );
+
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
+    <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Botón Volver */}
       <button 
         onClick={() => navigate(-1)}
-        className="flex items-center text-gray-500 hover:text-brand-primary mb-6 transition-colors"
+        className="flex items-center text-gray-500 hover:text-brand-primary mb-6 transition-colors group"
       >
-        <ArrowLeft size={20} className="mr-2" />
+        <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
         Volver a la lista
       </button>
 
       {/* Tarjeta Principal */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         
-        {/* Cabecera de la Tarjeta */}
-        <div className="bg-slate-50 p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        {/* Cabecera */}
+        <div className="bg-slate-50 p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {task.title}
               </h1>
               <Badge status={task.status} />
             </div>
-            <p className="text-gray-500 font-medium">Asignación Académica</p>
+            <p className="text-gray-500 font-medium flex items-center gap-2">
+              {task.type === 'ASSIGNMENT' ? 'Práctica Académica' : 'Evaluación Oficial'}
+              {task.type === 'EVALUATION' && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">¡INTENTO ÚNICO!</span>}
+            </p>
           </div>
 
-          {/* Botón de Acción Principal (Gamificado) */}
+          {/* Botón de Acción Principal */}
           <button
             onClick={handleStartGame}
-            disabled={task.status === 'EXPIRED'} // Deshabilitar si venció
-            className="group relative inline-flex items-center justify-center px-8 py-3 font-bold text-white transition-all duration-200 bg-brand-primary rounded-full hover:bg-brand-secondary focus:outline-none ring-offset-2 focus:ring-2 shadow-lg hover:shadow-brand-primary/40 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={task.status === 'EXPIRED'}
+            className={`
+              group relative inline-flex items-center justify-center px-8 py-3 font-bold text-white transition-all duration-200 rounded-full shadow-lg focus:outline-none ring-offset-2 focus:ring-2
+              ${task.status === 'EXPIRED' 
+                ? 'bg-gray-400 cursor-not-allowed opacity-70' 
+                : 'bg-brand-primary hover:bg-brand-secondary hover:shadow-brand-primary/40 hover:-translate-y-1'
+              }
+            `}
           >
-            <span className="mr-2 text-lg">Iniciar Misión</span>
-            <Play size={20} className="fill-current" />
+            {task.status === 'EXPIRED' ? (
+              <span className="flex items-center gap-2"><AlertCircle size={20}/> Misión Cerrada</span>
+            ) : (
+              <>
+                <span className="mr-2 text-lg">Iniciar Misión</span>
+                <Play size={20} className="fill-current group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </button>
         </div>
 
         {/* Cuerpo de Detalles */}
         <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          {/* Columna Izquierda: Descripción */}
+          {/* Descripción */}
           <div className="md:col-span-2 space-y-6">
             <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">
-                Descripción de la Misión
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                Briefing de la Misión
               </h3>
               <p className="text-gray-700 leading-relaxed text-lg">
                 {task.description}
               </p>
-              <p className="text-gray-600 mt-4 leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-              </p>
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                <h4 className="font-bold text-blue-800 text-sm mb-1">Instrucciones Adicionales:</h4>
+                <p className="text-sm text-blue-700">
+                  Recuerda revisar el presupuesto inicial y las expectativas del consumidor antes de tomar decisiones en la simulación. Los resultados se guardarán automáticamente al finalizar.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Columna Derecha: Métricas Clave */}
+          {/* Métricas */}
           <div className="bg-gray-50 rounded-xl p-6 space-y-6 border border-gray-100 h-fit">
             
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+              <div className="p-3 bg-white border border-gray-200 text-blue-600 rounded-lg shadow-sm">
                 <Calendar size={24} />
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase">Fecha Límite</p>
                 <p className="font-bold text-slate-800 text-lg">
-                  {new Date(task.deadline).toLocaleDateString()}
+                  {new Date(task.deadline).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
+              <div className="p-3 bg-white border border-gray-200 text-purple-600 rounded-lg shadow-sm">
                 <RefreshCw size={24} />
               </div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase">Intentos</p>
-                <p className="font-bold text-slate-800 text-lg">
-                  {task.attempts} <span className="text-gray-400 text-sm">de {task.maxAttempts}</span>
-                </p>
-                <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+              <div className="w-full">
+                <p className="text-xs font-bold text-gray-400 uppercase">Intentos Realizados</p>
+                <div className="flex justify-between items-end mb-1">
+                  <p className="font-bold text-slate-800 text-lg">
+                    {task.attempts} / {task.maxAttempts}
+                  </p>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-purple-500 h-1.5 rounded-full" 
-                    style={{ width: `${(task.attempts / task.maxAttempts) * 100}%` }}
+                    className={`h-2 rounded-full transition-all duration-500 ${task.attempts >= task.maxAttempts ? 'bg-red-500' : 'bg-purple-500'}`}
+                    style={{ width: `${Math.min((task.attempts / task.maxAttempts) * 100, 100)}%` }}
                   ></div>
                 </div>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-amber-100 text-amber-600 rounded-lg">
+              <div className="p-3 bg-white border border-gray-200 text-amber-600 rounded-lg shadow-sm">
                 <Trophy size={24} />
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase">Nota Mínima</p>
                 <p className="font-bold text-slate-800 text-lg">
-                  {(task.minScore * 100).toFixed(0)}%
+                  {(task.minScore * 100).toFixed(0)}/100
                 </p>
               </div>
             </div>
