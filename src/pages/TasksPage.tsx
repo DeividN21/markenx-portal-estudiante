@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TaskFilters } from '../components/ui/TaskFilters';
 import { TaskCard } from '../components/ui/TaskCard';
 import { mockTasks } from '../mocks/tasks';
@@ -6,12 +7,11 @@ import type { Task } from '../types';
 
 export const TasksPage = () => {
   // Filtrar solo las que son de tipo "ASSIGNMENT" (Tareas con varios intentos)
-  // Las EVALUATIONS irán en su propia página.
+  const navigate = useNavigate();
   const assignments = mockTasks.filter(t => t.type === 'ASSIGNMENT');
 
   const handleTaskClick = (task: Task) => {
-    console.log("Navegar al detalle de la tarea:", task.id);
-    // Aquí luego pondremos la navegación: navigate(`/tasks/${task.id}`);
+    navigate(`/tasks/${task.id}`);
   };
 
   return (
