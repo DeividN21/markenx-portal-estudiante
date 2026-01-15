@@ -5,35 +5,29 @@ import { TaskCard } from '../components/ui/TaskCard';
 import { mockTasks } from '../mocks/tasks';
 import type { Task } from '../types';
 
-export const TasksPage = () => {
+export const EvaluationsPage = () => {
   const navigate = useNavigate();
   
-  // Estado para los filtros
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   
-  // Obtener solo tareas
-  const allAssignments = mockTasks.filter(t => t.type === 'ASSIGNMENT');
+  // Filtro solo EVALUATIONS
+  const allEvaluations = mockTasks.filter(t => t.type === 'EVALUATION');
 
-  // Lógica de filtrado
-  const filteredTasks = useMemo(() => {
-    return allAssignments.filter(task => {
-      // 1. Filtro de Estado
+  const filteredEvaluations = useMemo(() => {
+    return allEvaluations.filter(task => {
       if (statusFilter && task.status !== statusFilter) return false;
-      
-      // 2. Filtro de Fecha (Mostrar tareas que vencen en o antes de la fecha seleccionada)
       if (dateFilter) {
         const taskDate = new Date(task.deadline).setHours(0,0,0,0);
         const filterDate = new Date(dateFilter).setHours(0,0,0,0);
-        // Lógica: Mostrar tareas que vencen ese día
-        if (taskDate !== filterDate) return false; 
+        if (taskDate !== filterDate) return false;
       }
-      
       return true;
     });
-  }, [statusFilter, dateFilter, allAssignments]);
+  }, [statusFilter, dateFilter, allEvaluations]);
 
   const handleTaskClick = (task: Task) => {
+    // NAVEGACIÓN FUNCIONAL
     navigate(`/tasks/${task.id}`);
   };
 
@@ -41,14 +35,13 @@ export const TasksPage = () => {
     <div className="animate-in fade-in duration-500">
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
-          Tareas
+          Evaluaciones
         </h1>
         <p className="text-gray-500">
-          Gestiona tus actividades pendientes.
+          Exámenes de intento único.
         </p>
       </div>
 
-      {/* Barra de Filtros Funcional */}
       <TaskFilters 
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
@@ -58,8 +51,8 @@ export const TasksPage = () => {
       />
 
       <div className="space-y-4">
-        {filteredTasks.length > 0 ? (
-          filteredTasks.map(task => (
+        {filteredEvaluations.length > 0 ? (
+          filteredEvaluations.map(task => (
             <TaskCard 
               key={task.id} 
               task={task} 
@@ -68,13 +61,15 @@ export const TasksPage = () => {
           ))
         ) : (
           <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
-            <p className="text-gray-400 font-medium">No se encontraron tareas con estos filtros.</p>
-            <button 
-              onClick={() => { setStatusFilter(''); setDateFilter(''); }}
-              className="mt-4 text-brand-primary hover:underline text-sm"
-            >
-              Limpiar filtros
-            </button>
+            <p className="text-gray-400">No hay evaluaciones disponibles.</p>
+            {(statusFilter || dateFilter) && (
+              <button 
+                onClick={() => { setStatusFilter(''); setDateFilter(''); }}
+                className="mt-4 text-brand-primary hover:underline text-sm"
+              >
+                Limpiar filtros
+              </button>
+            )}
           </div>
         )}
       </div>

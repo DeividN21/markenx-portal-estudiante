@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FileText, GraduationCap, BarChart3 } from 'lucide-react';
+import { FileText, GraduationCap, BarChart3 } from 'lucide-react';
 import clsx from 'clsx';
 
 export const Sidebar = () => {
   const navItems = [
-    { name: 'Inicio', path: '/', icon: LayoutDashboard },
+    // { name: 'Inicio', path: '/', icon: LayoutDashboard },
     { name: 'Tareas', path: '/tasks', icon: FileText },
     { name: 'Evaluaciones', path: '/evaluations', icon: GraduationCap },
     { name: 'Progreso', path: '/progress', icon: BarChart3 },
@@ -32,7 +32,6 @@ export const Sidebar = () => {
         ))}
       </nav>
       
-      {/* Footer del Sidebar */}
       <div className="p-4 border-t border-gray-100">
         <p className="text-xs text-center text-gray-400">
           © 2026 MarkenX System<br />v1.0.0 Student

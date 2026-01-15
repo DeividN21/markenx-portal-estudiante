@@ -33,5 +33,16 @@ export const mockTasks: Task[] = [
     attempts: 0,
     maxAttempts: 1,
     minScore: 0.6
+  },
+  {
+    id: '4',
+    title: 'Evaluación Parcial: Aceptación',
+    description: 'Pon a prueba tus conocimientos sobre conducta del consumidor. Un solo intento.',
+    deadline: '2026-02-13',
+    status: 'PENDING',
+    type: 'EVALUATION',
+    attempts: 0,
+    maxAttempts: 1,
+    minScore: 0.7
   }
 ];

@@ -1,11 +1,16 @@
 import { LogOut, User as UserIcon } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-interface HeaderProps {
-  userName: string;
-  courseName: string;
-}
+export const Header = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-export const Header = ({ userName, courseName }: HeaderProps) => {
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <header className="bg-brand-primary text-white h-16 flex items-center justify-between px-6 shadow-md fixed w-full top-0 z-50">
       {/* Lado Izquierdo: Logo y Curso */}
@@ -15,7 +20,7 @@ export const Header = ({ userName, courseName }: HeaderProps) => {
         </div>
         <div className="h-6 w-px bg-white/30 mx-2 hidden md:block"></div>
         <div className="hidden md:block font-medium text-sm text-gray-100 uppercase tracking-wide">
-          {courseName}
+          {user?.course || 'Curso No Asignado'}
         </div>
       </div>
 
@@ -23,7 +28,7 @@ export const Header = ({ userName, courseName }: HeaderProps) => {
       <div className="flex items-center gap-6">
         <div className="text-right hidden sm:block">
           <p className="text-xs text-gray-300">Bienvenido/a</p>
-          <p className="font-semibold text-sm leading-tight">{userName}</p>
+          <p className="font-semibold text-sm leading-tight">{user?.name || 'Estudiante'}</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -31,6 +36,7 @@ export const Header = ({ userName, courseName }: HeaderProps) => {
             <UserIcon size={20} />
           </div>
           <button 
+            onClick={handleLogout}
             className="p-2 hover:bg-brand-secondary rounded-full transition-colors text-white/80 hover:text-white"
             title="Cerrar Sesión"
           >

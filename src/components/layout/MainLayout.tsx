@@ -6,10 +6,7 @@ export const MainLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 1. Header Fijo */}
-      <Header 
-        userName="Christian Jácome" 
-        courseName="ISWZ3104 - INTRODUCCIÓN A MARKETING I" 
-      />
+      <Header />
 
       {/* 2. Sidebar Fijo a la Izquierda */}
       <Sidebar />
