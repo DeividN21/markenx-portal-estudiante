@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
+import { TasksPage } from './pages/TasksPage';
 
 // Páginas temporales (Placeholders) para probar la navegación
 const Dashboard = () => <h1 className="text-3xl font-bold text-slate-800">Bienvenido al Portal</h1>;
@@ -16,7 +17,7 @@ function App() {
         {/* Rutas Privadas (Dentro del Layout) */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/tasks" element={<TasksPage />} />
           <Route path="/evaluations" element={<Evaluations />} />
           <Route path="/progress" element={<Progress />} />
         </Route>
