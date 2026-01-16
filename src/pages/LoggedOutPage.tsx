@@ -1,12 +1,19 @@
-/**
- * Página pública simple para verificar logout sin disparar auto-login.
- * Útil en DEV para evitar confusiones con SSO (Keycloak).
- */
+import { Link } from 'react-router-dom';
+
 export const LoggedOutPage = () => {
     return (
-        <div className="flex justify-center items-center h-64">
-            <div className="text-gray-600 font-medium">
-                Sesión cerrada en el sistema. Si vuelves a entrar a una ruta privada, se iniciará el login.
+        <div className="min-h-[60vh] flex items-center justify-center">
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm max-w-lg w-full">
+                <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Sesión cerrada</h1>
+                <p className="text-gray-600 mb-6">
+                    Has salido correctamente de MarkenX. Para volver a ingresar, usa el botón de inicio.
+                </p>
+                <Link
+                    to="/"
+                    className="inline-flex items-center justify-center bg-brand-primary hover:bg-brand-secondary text-white font-bold px-5 py-2.5 rounded-lg"
+                >
+                    Ir al inicio
+                </Link>
             </div>
         </div>
     );

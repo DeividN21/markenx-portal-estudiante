@@ -1,28 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { SessionProvider, useSession } from './context/sessionContext';
 import { MainLayout } from './components/layout/MainLayout';
 
-// Páginas privadas
+// Páginas
 import { TasksPage } from './pages/TasksPage';
 import { EvaluationsPage } from './pages/EvaluationsPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { TaskDetailPage } from './pages/TaskDetailPage';
 import { GamePage } from './pages/GamePage';
-
-// Páginas públicas
 import { LoggedOutPage } from './pages/LoggedOutPage';
 
-// Servicio auth (redirigir a Keycloak via BFF)
-import { authService } from './services/authService';
-
 /**
- * PrivateRoute (BFF Session)
- * -----------------------------------------
- * - No redirige a /login del frontend.
- * - Si no hay sesión, redirige al backend (/auth/login) para iniciar oauth2Login.
+ * RequireSession
+ * ------------------------------------------------------
+ * - Protege rutas privadas basándose en la sesión del BFF.
+ * - Si no hay sesión, sessionService/apiClient redirigirá al login.
  */
-const PrivateRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+const RequireSession = () => {
+  const { loading, isAuthenticated } = useSession();
 
   if (loading) {
     return (
@@ -32,39 +27,21 @@ const PrivateRoute = () => {
     );
   }
 
-  if (!isAuthenticated) {
-    authService.loginRedirect();
-    return null;
-  }
-
-  return <Outlet />;
-};
-
-/**
- * Mantener /login como compatibilidad:
- * - No es una página real.
- * - Solo redirige al login del BFF.
- */
-const LoginRedirect = () => {
-  authService.loginRedirect();
-  return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500 font-medium">Redirigiendo a inicio de sesión...</div>
-      </div>
-  );
+  // Si no está autenticado, no navegamos a /login (ya no existe).
+  // La redirección al login real la hace apiClient cuando llama /auth/me.
+  return isAuthenticated ? <Outlet /> : <div className="p-10 text-center">Redirigiendo a login...</div>;
 };
 
 function App() {
   return (
-      <AuthProvider>
+      <SessionProvider>
         <BrowserRouter>
           <Routes>
-            {/* Rutas públicas */}
-            <Route path="/login" element={<LoginRedirect />} />
+            {/* Logout landing */}
             <Route path="/logged-out" element={<LoggedOutPage />} />
 
             {/* Rutas privadas */}
-            <Route element={<PrivateRoute />}>
+            <Route element={<RequireSession />}>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Navigate to="/tasks" replace />} />
                 <Route path="/tasks" element={<TasksPage />} />
@@ -79,7 +56,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
+      </SessionProvider>
   );
 }
 

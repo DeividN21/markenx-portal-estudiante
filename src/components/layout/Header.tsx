@@ -1,20 +1,12 @@
 import { LogOut, User as UserIcon } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useSession } from '../../context/sessionContext';
 
 export const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useSession();
 
-  /**
-   * Logout:
-   * - Llama al backend para invalidar sesión.
-   * - Luego navega a una ruta pública para evitar auto-login inmediato.
-   *
-   * Nota:
-   * - Usamos window.location para asegurar que el Router no dispare rutas privadas.
-   */
-  const handleLogout = async () => {
-    await logout();
-    window.location.href = '/logged-out';
+  const handleLogout = () => {
+    // Logout real: navegación POST a /auth/logout para permitir 302 a Keycloak logout y retorno al frontend.
+    logout();
   };
 
   return (
@@ -25,7 +17,7 @@ export const Header = () => {
           </div>
           <div className="h-6 w-px bg-white/30 mx-2 hidden md:block"></div>
           <div className="hidden md:block font-medium text-sm text-gray-100 uppercase tracking-wide">
-            {user?.course || 'Curso No Asignado'}
+            {user?.courseName || 'Curso No Asignado'}
           </div>
         </div>
 

@@ -6,7 +6,7 @@
  * - El frontend SOLO redirige al BFF (/auth/login).
  * - El BFF maneja oauth2Login y crea la sesión (JSESSIONID).
  */
-import { apiClient } from './apiClient';
+import { apiClient } from '../api/apiClient.ts';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
