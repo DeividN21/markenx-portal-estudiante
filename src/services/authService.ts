@@ -1,72 +1,57 @@
-// Imports de configuración
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
-const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL;
-const CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID;
+/**
+ * authService (BFF Session)
+ * -----------------------------------------
+ * En el enfoque BFF:
+ * - El frontend NO autentica contra Keycloak (no password grant).
+ * - El frontend SOLO redirige al BFF (/auth/login).
+ * - El BFF maneja oauth2Login y crea la sesión (JSESSIONID).
+ */
+import { apiClient } from './apiClient';
 
-// Tipos
-export interface AuthResponse {
-  success: boolean;
-  user?: any;
-  token?: string;
-  error?: string;
+const API_URL = import.meta.env.VITE_API_URL;
+
+function buildUrl(path: string) {
+  return `${API_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
-// 1. LÓGICA MOCK (Local)
-const mockLogin = async (email: string, password: string): Promise<AuthResponse> => {
-  // Simular un delay de red
-  await new Promise(resolve => setTimeout(resolve, 800));
-
-  if (email.includes('@udla.edu.ec') && password.length >= 6) {
-    return {
-      success: true,
-      user: {
-        email,
-        name: 'Christian Jácome',
-        course: 'ISWZ3104 - MARKETING I'
-      },
-      token: 'mock-jwt-token-12345'
-    };
-  }
-  return { success: false, error: 'Credenciales inválidas (Mock)' };
+export type MeResponse = {
+  username: string | null;
+  email: string | null;
+  fullName: string | null;
+  roles: string[];
 };
 
-// 2. LÓGICA REAL (Keycloak)
-const realLogin = async (email: string, password: string): Promise<AuthResponse> => {
-  try {
-    const params = new URLSearchParams();
-    params.append('client_id', CLIENT_ID);
-    params.append('grant_type', 'password');
-    params.append('username', email);
-    params.append('password', password);
-
-    const response = await fetch(KEYCLOAK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params
-    });
-
-    if (!response.ok) throw new Error('Credenciales incorrectas en Keycloak');
-
-    const data = await response.json();
-    
-    // Aquí se podría decodificar el JWT para sacar el nombre real
-    return {
-      success: true,
-      user: {
-        email,
-        name: 'Estudiante MarkenX', // Idealmente decodificar data.access_token
-        course: 'Curso Activo' // Esto debería venir de otro endpoint de la API
-      },
-      token: data.access_token // El token real de Keycloak
-    };
-
-  } catch (error) {
-    console.error(error);
-    return { success: false, error: 'Error de conexión con el servidor' };
-  }
-};
-
-// 3. EXPORTAR SERVICIO (Switch Automático)
 export const authService = {
-  login: USE_MOCK ? mockLogin : realLogin
+  /**
+   * Inicia el flujo OAuth2 (redirige al BFF).
+   * Incluye "redirect" para que al volver de Keycloak regreses a la ruta actual.
+   */
+  loginRedirect: () => {
+    const returnTo = window.location.href; // SPA route actual
+    const url = new URL(buildUrl('/auth/login'));
+    url.searchParams.set('redirect', returnTo);
+    window.location.href = url.toString();
+  },
+
+  /**
+   * Obtiene la identidad actual desde el BFF.
+   * - 200 => usuario autenticado
+   * - 401 => no autenticado (apiClient puede redirigir si se usa ahí)
+   */
+  me: async (): Promise<MeResponse | null> => {
+    try {
+      return await apiClient.request<MeResponse>('/auth/me', { method: 'GET' });
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Cierra sesión del BFF.
+   * - Invalida HttpSession (JSESSIONID).
+   * - NO cierra sesión SSO de Keycloak (eso es logout federado).
+   */
+  logout: async (): Promise<void> => {
+    await apiClient.request('/auth/logout', { method: 'POST' });
+  },
 };

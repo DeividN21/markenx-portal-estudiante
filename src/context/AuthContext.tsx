@@ -1,83 +1,107 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService } from '../services/authService';
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
+import { authService, type MeResponse } from '../services/authService';
 
-// Se define la estructura del Usuario en sesión
+/**
+ * User (modelo para UI)
+ * -----------------------------------------
+ * En BFF Session, el frontend NO almacena token.
+ * La identidad se obtiene desde /auth/me.
+ *
+ * "course" no es parte de autenticación; provendrá de un endpoint de dominio más adelante.
+ */
 export interface User {
-  email: string;
-  name: string;
-  course: string;
-  token?: string; // Token JWT opcional
+  email: string | null;
+  name: string | null;
+  course: string | null;
+  roles: string[];
+  username?: string | null;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  /**
+   * Se mantiene la firma para compatibilidad con el código existente,
+   * pero no se usan email/password: el login real es redirect.
+   */
+  login: (email?: string, password?: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+function mapMeToUser(me: MeResponse): User {
+  return {
+    email: me.email ?? null,
+    username: me.username ?? null,
+    name: me.fullName ?? me.username ?? me.email ?? 'Usuario',
+    roles: me.roles ?? [],
+    course: null, // se llenará cuando exista endpoint de perfil/curso
+  };
+}
 
-  // 1. Verificar si hay sesión guardada al iniciar la app
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [loading, setLoading] = useState(true);
+  const [me, setMe] = useState<MeResponse | null>(null);
+
+  /**
+   * Init de sesión:
+   * - Al montar la app consultamos /auth/me.
+   * - Evita depender de localStorage.
+   */
   useEffect(() => {
-    const initAuth = () => {
-      const storedUser = localStorage.getItem('markenx_user');
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setIsAuthenticated(true);
-        } catch (e) {
-          console.error("Error al leer sesión local", e);
-          localStorage.removeItem('markenx_user');
-        }
+    let cancelled = false;
+
+    const initAuth = async () => {
+      try {
+        setLoading(true);
+        const meResponse = await authService.me();
+        if (!cancelled) setMe(meResponse);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     };
+
     initAuth();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // 2. Función de Login (Conecta con authService)
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const isAuthenticated = !!me;
+
+  const user: User | null = useMemo(() => {
+    return me ? mapMeToUser(me) : null;
+  }, [me]);
+
+  /**
+   * Login:
+   * - En BFF no se envían credenciales desde el frontend.
+   * - Redirige al flujo oauth2Login en el backend.
+   */
+  const login = async (): Promise<boolean> => {
+    authService.loginRedirect();
+    return true;
+  };
+
+  /**
+   * Logout:
+   * - Invalida sesión del BFF (JSESSIONID).
+   * - Limpia estado local para evitar mostrar datos stale.
+   */
+  const logout = async () => {
     try {
-      const response = await authService.login(email, password);
-      
-      if (response.success && response.user) {
-        const userToStore = { 
-          ...response.user, 
-          token: response.token 
-        };
-        
-        // Guardar en estado y en disco
-        setUser(userToStore);
-        setIsAuthenticated(true);
-        localStorage.setItem('markenx_user', JSON.stringify(userToStore));
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
+      await authService.logout();
+    } finally {
+      setMe(null);
     }
   };
 
-  // 3. Función de Logout
-  const logout = () => {
-    localStorage.removeItem('markenx_user');
-    setUser(null);
-    setIsAuthenticated(false);
-  };
-
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
-      {!loading && children}
-    </AuthContext.Provider>
+      <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
+        {!loading && children}
+      </AuthContext.Provider>
   );
 };
 

@@ -2,56 +2,84 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { MainLayout } from './components/layout/MainLayout';
 
-// Páginas
-import { LoginPage } from './pages/LoginPage';
+// Páginas privadas
 import { TasksPage } from './pages/TasksPage';
 import { EvaluationsPage } from './pages/EvaluationsPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { TaskDetailPage } from './pages/TaskDetailPage';
 import { GamePage } from './pages/GamePage';
 
-// Componente para proteger rutas privadas
+// Páginas públicas
+import { LoggedOutPage } from './pages/LoggedOutPage';
+
+// Servicio auth (redirigir a Keycloak via BFF)
+import { authService } from './services/authService';
+
+/**
+ * PrivateRoute (BFF Session)
+ * -----------------------------------------
+ * - No redirige a /login del frontend.
+ * - Si no hay sesión, redirige al backend (/auth/login) para iniciar oauth2Login.
+ */
 const PrivateRoute = () => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+        </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    authService.loginRedirect();
+    return null;
+  }
+
+  return <Outlet />;
+};
+
+/**
+ * Mantener /login como compatibilidad:
+ * - No es una página real.
+ * - Solo redirige al login del BFF.
+ */
+const LoginRedirect = () => {
+  authService.loginRedirect();
+  return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-gray-500 font-medium">Redirigiendo a inicio de sesión...</div>
+      </div>
+  );
 };
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Ruta Pública */}
-          <Route path="/login" element={<LoginPage />} />
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Rutas públicas */}
+            <Route path="/login" element={<LoginRedirect />} />
+            <Route path="/logged-out" element={<LoggedOutPage />} />
 
-          {/* Rutas Privadas (Protegidas) */}
-          <Route element={<PrivateRoute />}>
-            <Route element={<MainLayout />}>
-              
-              {/* Redirección raíz a tareas */}
-              <Route path="/" element={<Navigate to="/tasks" replace />} />
-              
-              {/* TAREAS */}
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
-              
-              {/* JUEGO */}
-              <Route path="/game/:taskId" element={<GamePage />} />
-              
-              {/* EVALUACIONES */}
-              <Route path="/evaluations" element={<EvaluationsPage />} />
-              
-              {/* PROGRESO */}
-              <Route path="/progress" element={<ProgressPage />} />
-              
+            {/* Rutas privadas */}
+            <Route element={<PrivateRoute />}>
+              <Route element={<MainLayout />}>
+                <Route path="/" element={<Navigate to="/tasks" replace />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
+                <Route path="/game/:taskId" element={<GamePage />} />
+                <Route path="/evaluations" element={<EvaluationsPage />} />
+                <Route path="/progress" element={<ProgressPage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
   );
 }
 
