@@ -16,6 +16,14 @@ export interface TaskDto {
     scenarioId?: string;
 }
 
+export interface TaskDetailDto {
+    studentId: string,
+    taskId: string,
+    currentAttempt: number,
+    maxAttempts: number,
+    remainingAttempts: number
+}
+
 /**
  * DTO para GET /courses/{courseId}/tasks (lista resumida)
  * Algunos endpoints devuelven taskId en lugar de id

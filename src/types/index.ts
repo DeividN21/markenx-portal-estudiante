@@ -11,11 +11,33 @@ export interface Task {
   description: string;
   deadline: string;
   status: 'PENDING' | 'COMPLETED' | 'EXPIRED';
-  type: 'ASSIGNMENT' | 'EVALUATION'; // Asignación (varios intentos) / Evaluación (1 intento)
+  type: 'ASSIGNMENT' | 'EVALUATION';
   attempts: number;
   maxAttempts: number;
   minScore: number;
   scenarioId?: string;
+}
+
+export interface TaskDetail {
+  studentId: string,
+  taskId: string,
+  currentAttempt: number,
+  maxAttempts: number,
+  remainingAttempts: number
+}
+
+export interface TaskSummary {
+  id: string;
+  title: string;
+  description: string;
+  deadline: string;
+  status: 'PENDING' | 'COMPLETED' | 'EXPIRED';
+  type: 'ASSIGNMENT' | 'EVALUATION';
+  minScore: number;
+  scenarioId?: string;
+  studentId: string,
+  currentAttempt: number,
+  maxAttempts: number,
 }
 
 export interface Attempt {

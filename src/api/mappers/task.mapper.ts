@@ -1,5 +1,5 @@
-import type { Task } from '../../types';
-import type { TaskDto } from '../dtos/task.dto';
+import type { Task, TaskDetail } from '../../types';
+import type { TaskDto, TaskDetailDto } from '../dtos/task.dto';
 
 type ApiTaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'OUTDATED' | 'FINISHED';
 type UiTaskStatus = 'PENDING' | 'COMPLETED' | 'EXPIRED';
@@ -22,10 +22,6 @@ function mapApiStatusToUiStatus(apiStatus: ApiTaskStatus): UiTaskStatus {
     }
 }
 
-/**
- * Mapper: API DTO (detalle) -> UI Model (Task)
- * Para GET /tasks/{taskId}
- */
 export function mapTaskDtoToTask(dto: TaskDto): Task {
     return {
         id: dto.id,
@@ -41,10 +37,16 @@ export function mapTaskDtoToTask(dto: TaskDto): Task {
     };
 }
 
-/**
- * Mapper: API DTO (lista) -> UI Model (Task)
- * Para GET /courses/{courseId}/tasks
- */
+export function mapTaskDetailDtoToTaskDetail(dto: TaskDetailDto): TaskDetail {
+    return {
+        studentId: dto.studentId,
+        taskId: dto.taskId,
+        currentAttempt: dto.currentAttempt,
+        maxAttempts: dto.maxAttempts,
+        remainingAttempts: dto.remainingAttempts,
+    }
+}
+
 export function mapTaskListItemDtoToTask(dto: TaskDto): Task {
     return {
         id: dto.id,

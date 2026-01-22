@@ -1,30 +1,15 @@
-import type { Task, Attempt } from '../types';
+import type { Task, TaskDetail, Attempt } from '../types';
 import { apiClient } from '../api/apiClient';
-import type { TaskDto, TaskListItemDto } from '../api/dtos/task.dto';
+import type { TaskDetailDto, TaskDto, TaskListItemDto } from '../api/dtos/task.dto';
 import type { AttemptDto, StudentAttemptDto } from '../api/dtos/attempt.dto';
 import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';
-import { mapTaskDtoToTask, mapTaskListItemDtoToTask } from '../api/mappers/task.mapper';
+import { mapTaskDetailDtoToTaskDetail, mapTaskDtoToTask, mapTaskListItemDtoToTask } from '../api/mappers/task.mapper';
 import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
-/**
- * studentService (UI-level)
- * ------------------------------------------------------
- * Responsabilidad:
- * - Consumir endpoints del BFF/API y mapear a modelos UI.
- * - NO conocer auth tokens.
- * - Mantener firmas simples para páginas.
- *
- * NOTA:
- * Este servicio asume que el backend ya sabe "quién soy" por la sesión,
- * o que el front ya tiene studentId/courseId vía SessionContext.
- */
 export const studentService = {
-  /**
-   * Obtiene una tarea por ID.
-   * GET /tasks/{taskId}
-   */
+
   getTaskById: async (taskId: string): Promise<Task> => {
     if (USE_MOCK) {
       return {
@@ -43,10 +28,20 @@ export const studentService = {
     return mapTaskDtoToTask(dto);
   },
 
-  /**
-   * Lista tareas del curso.
-   * GET /courses/{courseId}/tasks
-   */
+  getTaskDetailById: async (studentId: string, taskId: string): Promise<TaskDetail> => {
+    if (USE_MOCK) {
+      return {
+        studentId: studentId,
+        taskId: taskId,
+        currentAttempt: 1,
+        maxAttempts: 3,
+        remainingAttempts: 2,
+      };
+    }
+    const dto = await apiClient.request<TaskDetailDto>(`/students/${studentId}/tasks/${taskId}/progress`, { method: 'GET' });
+    return mapTaskDetailDtoToTaskDetail(dto);
+  },
+
   getTasksByStudent: async (studentId: string): Promise<Task[]> => {
     if (USE_MOCK) {
       return [];
@@ -55,17 +50,11 @@ export const studentService = {
     return dtos.map(mapTaskListItemDtoToTask);
   },
 
-  /**
-   * Intentos por tarea (para detalle e historial).
-   */
   getAttemptsByTask: async (taskId: string): Promise<AttemptDto[]> => {
     if (USE_MOCK) return [];
     return apiClient.request<AttemptDto[]>(`/tasks/${taskId}/attempts`, { method: 'GET' });
   },
 
-  /**
-   * Métricas por intento (para ProgressPage).
-   */
   getMetricsByAttempt: async (attemptId: string): Promise<AttemptMetricsDto> => {
     if (USE_MOCK) {
       return {
@@ -81,10 +70,6 @@ export const studentService = {
     return apiClient.request<AttemptMetricsDto>(`/attempts/${attemptId}/metrics`, { method: 'GET' });
   },
 
-  /**
-   * Intentos del estudiante (historial).
-   * GET /students/{studentId}/attempts
-   */
   getAttemptsByStudent: async (studentId: string): Promise<Attempt[]> => {
     if (USE_MOCK) {
       return [

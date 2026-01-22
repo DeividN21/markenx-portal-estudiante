@@ -1,15 +1,33 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
+import { useSession } from '../context/sessionContext';
 import { studentService } from '../services/studentService';
 import { Badge } from '../components/ui/Badge';
-import type { Task } from '../types';
+import type { Task, TaskDetail, TaskSummary } from '../types';
+
+function createTaskSummary(task: Task, detail: TaskDetail): TaskSummary {
+  return {
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    deadline: task.deadline,
+    status: task.status,
+    type: task.type,
+    minScore: task.minScore,
+    scenarioId: task.scenarioId,
+    studentId: detail.studentId,
+    currentAttempt: detail.currentAttempt,
+    maxAttempts: detail.maxAttempts,
+  }
+}
 
 export const TaskDetailPage = () => {
   const { taskId } = useParams();
+  const { user } = useSession();
   const navigate = useNavigate();
   
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<TaskSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Cargar tarea individual
@@ -19,7 +37,8 @@ export const TaskDetailPage = () => {
       try {
         setLoading(true);
         const foundTask = await studentService.getTaskById(taskId);
-        setTask(foundTask || null);
+        const detail = await studentService.getTaskDetailById(user.id, taskId);
+        setTask(createTaskSummary(foundTask, detail) || null);
       } catch (error) {
         console.error("Error cargando detalle:", error);
       } finally {
@@ -140,13 +159,13 @@ export const TaskDetailPage = () => {
                 <p className="text-xs font-bold text-gray-400 uppercase">Intentos Realizados</p>
                 <div className="flex justify-between items-end mb-1">
                   <p className="font-bold text-slate-800 text-lg">
-                    {task.attempts} / {task.maxAttempts}
+                    {task.currentAttempt} / {task.maxAttempts}
                   </p>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className={`h-2 rounded-full transition-all duration-500 ${task.attempts >= task.maxAttempts ? 'bg-red-500' : 'bg-purple-500'}`}
-                    style={{ width: `${Math.min((task.attempts / task.maxAttempts) * 100, 100)}%` }}
+                    className={`h-2 rounded-full transition-all duration-500 ${task.currentAttempt >= task.maxAttempts ? 'bg-red-500' : 'bg-purple-500'}`}
+                    style={{ width: `${Math.min((task.currentAttempt / task.maxAttempts) * 100, 100)}%` }}
                   ></div>
                 </div>
               </div>
