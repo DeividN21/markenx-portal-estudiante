@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { FileText, GraduationCap, BarChart3 } from 'lucide-react';
+import { FileText, BarChart3 } from 'lucide-react';
 import clsx from 'clsx';
 
 export const Sidebar = () => {
   const navItems = [
     // { name: 'Inicio', path: '/', icon: LayoutDashboard },
     { name: 'Tareas', path: '/tasks', icon: FileText },
-    { name: 'Evaluaciones', path: '/evaluations', icon: GraduationCap },
+    // { name: 'Evaluaciones', path: '/evaluations', icon: GraduationCap },
     { name: 'Progreso', path: '/progress', icon: BarChart3 },
   ];
 

@@ -1,20 +1,19 @@
 import type { Task, TaskDetail } from '../../types';
 import type { TaskDto, TaskDetailDto } from '../dtos/task.dto';
 
-type ApiTaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'OUTDATED' | 'FINISHED';
-type UiTaskStatus = 'PENDING' | 'COMPLETED' | 'EXPIRED';
+type ApiTaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'OUTDATED';
+type UiTaskStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'EXPIRED';
 
-/**
- * Mapea estados del API a estados de UI
- * - NOT_STARTED -> PENDING (aún no inicia)
- * - IN_PROGRESS -> PENDING (en curso, aún se puede completar)
- */
 function mapApiStatusToUiStatus(apiStatus: ApiTaskStatus): UiTaskStatus {
     switch (apiStatus) {
         case 'NOT_STARTED':
             return 'PENDING';
         case 'IN_PROGRESS':
             return 'PENDING';
+        case 'COMPLETED':
+            return 'COMPLETED';
+        case 'FAILED':
+            return 'FAILED';
         case 'OUTDATED':
             return 'EXPIRED';
         default:

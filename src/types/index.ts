@@ -10,7 +10,7 @@ export interface Task {
   title: string;
   description: string;
   deadline: string;
-  status: 'PENDING' | 'COMPLETED' | 'EXPIRED';
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'EXPIRED';
   type: 'ASSIGNMENT' | 'EVALUATION';
   attempts: number;
   maxAttempts: number;
