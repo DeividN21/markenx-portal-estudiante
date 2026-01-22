@@ -1,22 +1,22 @@
 import type { Attempt } from '../../types';
 import type { StudentAttemptDto } from '../dtos/attempt.dto';
 
-type ApiOutcome = 'WIN' | 'LOSE' | 'IN_PROGRESS';
-type UiOutcome = 'GANASTE' | 'PERDISTE' | 'EN_PROGRESO';
+type ApiOutcome = 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN';
+type UiOutcome = 'GANASTE' | 'PERDISTE' | 'EN PROGRESO';
 
 /**
  * Mapea outcome del API a outcome de UI
  */
 function mapApiOutcomeToUiOutcome(apiOutcome: ApiOutcome): UiOutcome {
     switch (apiOutcome) {
-        case 'WIN':
+        case 'APPROVED':
             return 'GANASTE';
-        case 'LOSE':
+        case 'DISAPPROVED':
             return 'PERDISTE';
-        case 'IN_PROGRESS':
-            return 'EN_PROGRESO';
+        case 'UNKNOWN':
+            return 'EN PROGRESO';
         default:
-            return 'EN_PROGRESO';
+            return 'EN PROGRESO';
     }
 }
 
@@ -29,7 +29,7 @@ export function mapStudentAttemptDtoToAttempt(dto: StudentAttemptDto): Attempt {
         id: dto.attemptId,
         taskId: dto.taskId,
         date: dto.finishedAt || dto.startedAt,
-        outcome: mapApiOutcomeToUiOutcome(dto.outcome),
+        outcome: mapApiOutcomeToUiOutcome(dto.status),
         score: dto.score,
         status: dto.status,
     };

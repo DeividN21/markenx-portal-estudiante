@@ -120,7 +120,6 @@ export const ProgressPage = () => {
                   <th className="px-6 py-3">Fecha</th>
                   <th className="px-6 py-3 text-center">Resultado</th>
                   <th className="px-6 py-3 text-center">Puntuación</th>
-                  <th className="px-6 py-3 text-center">Estado</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -138,9 +137,9 @@ export const ProgressPage = () => {
                     <td className="px-6 py-4 text-center">
                       <span className={clsx(
                         "px-2 py-1 rounded text-xs font-bold border",
-                        attempt.outcome === 'GANASTE'
+                        attempt.status === 'APPROVED'
                           ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                          : attempt.outcome === 'EN_PROGRESO'
+                          : attempt.status === 'UNKNOWN'
                           ? "bg-yellow-100 text-yellow-700 border-yellow-200"
                           : "bg-red-100 text-red-700 border-red-200"
                       )}>
@@ -151,19 +150,6 @@ export const ProgressPage = () => {
                       <div className="font-bold text-slate-700">
                         {(attempt.score * 100).toFixed(0)}%
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={clsx(
-                        "px-2 py-1 rounded text-xs font-medium",
-                        attempt.status === 'APPROVED'
-                          ? "bg-green-50 text-green-700"
-                          : attempt.status === 'DISAPPROVED'
-                          ? "bg-red-50 text-red-700"
-                          : "bg-gray-50 text-gray-700"
-                      )}>
-                        {attempt.status === 'APPROVED' ? 'Aprobado' :
-                         attempt.status === 'DISAPPROVED' ? 'Reprobado' : 'Pendiente'}
-                      </span>
                     </td>
                   </tr>
                 ))}

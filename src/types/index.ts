@@ -45,7 +45,7 @@ export interface Attempt {
   taskId: string;
   taskTitle?: string;
   date: string;
-  outcome: 'GANASTE' | 'PERDISTE' | 'EN_PROGRESO';
+  outcome: 'GANASTE' | 'PERDISTE' | 'EN PROGRESO';
   score: number;
   status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED';
 }
