@@ -37,6 +37,7 @@ export function mapTaskDtoToTask(dto: TaskDto): Task {
         attempts: dto.currentAttempt,
         maxAttempts: dto.maxAttempts,
         minScore: dto.minScoreToPass,
+        scenarioId: dto.scenarioId,
     };
 }
 
@@ -55,5 +56,6 @@ export function mapTaskListItemDtoToTask(dto: TaskDto): Task {
         attempts: dto.currentAttempt,
         maxAttempts: dto.maxAttempts,
         minScore: dto.minScoreToPass,
+        scenarioId: dto.scenarioId,
     };
 }

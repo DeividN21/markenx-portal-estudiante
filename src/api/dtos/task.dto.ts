@@ -13,6 +13,7 @@ export interface TaskDto {
     currentAttempt: number;
     maxAttempts: number;
     remainingAttemtps: number;
+    scenarioId?: string;
 }
 
 /**

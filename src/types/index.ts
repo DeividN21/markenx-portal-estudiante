@@ -15,6 +15,7 @@ export interface Task {
   attempts: number;
   maxAttempts: number;
   minScore: number;
+  scenarioId?: string;
 }
 
 export interface Attempt {
