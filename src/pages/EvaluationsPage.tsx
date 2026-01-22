@@ -21,7 +21,7 @@ export const EvaluationsPage = () => {
       if (!user?.courseId) return;
       try {
         setLoading(true);
-        const all = await studentService.getTasksByCourse(user.courseId);
+        const all = await studentService.getTasksByStudent(user.courseId);
         setEvaluations(all.filter(t => t.type === 'EVALUATION'));
       } finally {
         setLoading(false);

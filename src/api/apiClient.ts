@@ -1,3 +1,5 @@
+import { env } from '../config/env';
+
 /**
  * apiClient (BFF Session)
  * ------------------------------------------------------
@@ -9,7 +11,7 @@
  * - VITE_API_URL debe incluir el context-path: http://localhost:8080/api/v1
  * - credentials: 'include' es obligatorio para enviar/recibir cookies.
  */
-const API_URL = import.meta.env.VITE_API_URL as string;
+const API_URL = env.API_BASE_URL;
 
 function buildUrl(endpoint: string) {
   return `${API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;

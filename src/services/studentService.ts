@@ -1,9 +1,10 @@
-import type { Task } from '../types';
+import type { Task, Attempt } from '../types';
 import { apiClient } from '../api/apiClient';
-import type { TaskDto } from '../api/dtos/task.dto';
-import type { AttemptDto } from '../api/dtos/attempt.dto';
+import type { TaskDto, TaskListItemDto } from '../api/dtos/task.dto';
+import type { AttemptDto, StudentAttemptDto } from '../api/dtos/attempt.dto';
 import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';
-import { mapTaskDtoToTask } from '../api/mappers/task.mapper';
+import { mapTaskDtoToTask, mapTaskListItemDtoToTask } from '../api/mappers/task.mapper';
+import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
@@ -21,17 +22,37 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
  */
 export const studentService = {
   /**
-   * Lista tareas del curso.
-   * Requiere: courseId.
+   * Obtiene una tarea por ID.
+   * GET /tasks/{taskId}
    */
-  getTasksByCourse: async (courseId: string): Promise<Task[]> => {
+  getTaskById: async (taskId: string): Promise<Task> => {
     if (USE_MOCK) {
-      // reutiliza tus mocks existentes si quieres; aquí devolvemos vacío por simplicidad
+      return {
+        id: taskId,
+        title: 'Tarea Mock',
+        description: 'Descripción de tarea mock',
+        deadline: new Date().toISOString(),
+        status: 'PENDING',
+        type: 'ASSIGNMENT',
+        attempts: 0,
+        maxAttempts: 3,
+        minScore: 0.7,
+      };
+    }
+    const dto = await apiClient.request<TaskDto>(`/tasks/${taskId}`, { method: 'GET' });
+    return mapTaskDtoToTask(dto);
+  },
+
+  /**
+   * Lista tareas del curso.
+   * GET /courses/{courseId}/tasks
+   */
+  getTasksByStudent: async (studentId: string): Promise<Task[]> => {
+    if (USE_MOCK) {
       return [];
     }
-
-    const dtos = await apiClient.request<TaskDto[]>(`/courses/${courseId}/tasks`, { method: 'GET' });
-    return dtos.map(mapTaskDtoToTask);
+    const dtos = await apiClient.request<TaskListItemDto[]>(`/students/${studentId}/tasks`, { method: 'GET' });
+    return dtos.map(mapTaskListItemDtoToTask);
   },
 
   /**
@@ -58,5 +79,27 @@ export const studentService = {
       };
     }
     return apiClient.request<AttemptMetricsDto>(`/attempts/${attemptId}/metrics`, { method: 'GET' });
+  },
+
+  /**
+   * Intentos del estudiante (historial).
+   * GET /students/{studentId}/attempts
+   */
+  getAttemptsByStudent: async (studentId: string): Promise<Attempt[]> => {
+    if (USE_MOCK) {
+      return [
+        {
+          id: 'att-mock-1',
+          taskId: 'task-1',
+          taskTitle: 'Tarea Mock',
+          date: new Date().toISOString(),
+          outcome: 'GANASTE',
+          score: 0.85,
+          status: 'APPROVED',
+        },
+      ];
+    }
+    const dtos = await apiClient.request<StudentAttemptDto[]>(`/students/${studentId}/attempts`, { method: 'GET' });
+    return dtos.map(mapStudentAttemptDtoToAttempt);
   },
 };

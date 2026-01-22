@@ -16,3 +16,13 @@ export interface Task {
   maxAttempts: number;
   minScore: number;
 }
+
+export interface Attempt {
+  id: string;
+  taskId: string;
+  taskTitle?: string;
+  date: string;
+  outcome: 'GANASTE' | 'PERDISTE' | 'EN_PROGRESO';
+  score: number;
+  status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED';
+}

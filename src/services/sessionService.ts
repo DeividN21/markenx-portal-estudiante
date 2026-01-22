@@ -1,6 +1,6 @@
 import { apiClient } from '../api/apiClient';
 import type { AuthMeResponse } from '../api/dtos/auth.dto';
-import type { StudentMeResponse } from '../api/dtos/student.dto';
+import type { StudentProfileResponse } from '../api/dtos/student.dto';
 import type { CourseResponse } from '../api/dtos/course.dto';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
@@ -37,17 +37,15 @@ export const sessionService = {
      * Devuelve el perfil del estudiante actual (dominio).
      * Recomendado que el backend derive el studentId desde la sesión.
      */
-    getStudentMe: async (): Promise<StudentMeResponse> => {
+    getStudentMe: async (): Promise<StudentProfileResponse> => {
         if (USE_MOCK) {
             return {
-                studentId: 'student-1',
+                id: 'student-1',
                 email: 'mock@udla.edu.ec',
-                firstName: 'Mock',
-                lastName: 'User',
-                courseId: 'course-1',
+                fullName: 'Mock User',
             };
         }
-        return apiClient.request<StudentMeResponse>('/students/me', { method: 'GET' });
+        return apiClient.request<StudentProfileResponse>('/students/me', { method: 'GET' });
     },
 
     getCourseByStudentId: async (studentId: string): Promise<CourseResponse> => {

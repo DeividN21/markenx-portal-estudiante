@@ -30,25 +30,30 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         try {
             // 1) Auth (roles + identidad)
             const auth = await sessionService.getAuthMe();
+            console.log('[SessionContext] auth response:', auth);
 
             // 2) Dominio: studentId + courseId (recomendado que venga aquí)
             const student = await sessionService.getStudentMe();
+            console.log('[SessionContext] student response:', student);
 
             // 3) Curso (nombre visible en Header)
-            const course = await sessionService.getCourseByStudentId(student.studentId);
+            const course = student.enrolledCourse;
+            console.log('[SessionContext] course response:', course);
 
-            const fullName =
-                auth.fullName ||
-                `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() ||
-                'Estudiante';
+            // fullName viene de student.fullName o auth.fullName
+            const fullName = student.fullName || auth.fullName || 'Estudiante';
+
+            // courseId viene del endpoint /students/{id}/course
+            const courseId = course.id;
+            console.log('[SessionContext] resolved courseId:', courseId);
 
             setUser({
-                id: student.studentId,
+                id: student.id,
                 email: student.email,
                 name: fullName,
                 roles: auth.roles ?? [],
-                courseId: student.courseId,
-                courseName: course.courseName,
+                courseId,
+                courseName: course.label,
             });
         } finally {
             // Si no hay sesión, apiClient ya redirige al login (no llegas aquí usualmente),

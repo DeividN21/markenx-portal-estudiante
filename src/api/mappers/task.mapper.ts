@@ -1,27 +1,59 @@
 import type { Task } from '../../types';
 import type { TaskDto } from '../dtos/task.dto';
 
+type ApiTaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'OUTDATED' | 'FINISHED';
+type UiTaskStatus = 'PENDING' | 'COMPLETED' | 'EXPIRED';
+
 /**
- * Mapper: API DTO -> UI Model (Task)
- * ------------------------------------------------------
- * Responsabilidad:
- * - Mantener estable el contrato interno de la UI aunque el backend cambie.
- * - Centralizar reglas de compatibilidad (ej: summary -> description).
- * - Evitar "parches" en páginas.
+ * Mapea estados del API a estados de UI
+ * - NOT_STARTED -> PENDING (aún no inicia)
+ * - IN_PROGRESS -> PENDING (en curso, aún se puede completar)
+ */
+function mapApiStatusToUiStatus(apiStatus: ApiTaskStatus): UiTaskStatus {
+    switch (apiStatus) {
+        case 'NOT_STARTED':
+            return 'PENDING';
+        case 'IN_PROGRESS':
+            return 'PENDING';
+        case 'OUTDATED':
+            return 'EXPIRED';
+        default:
+            return 'PENDING';
+    }
+}
+
+/**
+ * Mapper: API DTO (detalle) -> UI Model (Task)
+ * Para GET /tasks/{taskId}
  */
 export function mapTaskDtoToTask(dto: TaskDto): Task {
-    const maxAttempts = dto.maxAttempts ?? 1;
-    const attempts = dto.currentAttempt ?? 0;
-
     return {
-        id: dto.taskId,
+        id: dto.id,
         title: dto.title,
         description: dto.summary ?? '',
         deadline: dto.deadline,
-        status: dto.status,
-        type: maxAttempts > 1 ? 'ASSIGNMENT' : 'EVALUATION',
-        attempts,
-        maxAttempts,
-        minScore: dto.minScoreToPass ?? 0.7,
+        status: mapApiStatusToUiStatus(dto.status),
+        type: 'ASSIGNMENT',
+        attempts: dto.currentAttempt,
+        maxAttempts: dto.maxAttempts,
+        minScore: dto.minScoreToPass,
+    };
+}
+
+/**
+ * Mapper: API DTO (lista) -> UI Model (Task)
+ * Para GET /courses/{courseId}/tasks
+ */
+export function mapTaskListItemDtoToTask(dto: TaskDto): Task {
+    return {
+        id: dto.id,
+        title: dto.title,
+        description: dto.summary ?? '',
+        deadline: dto.deadline,
+        status: mapApiStatusToUiStatus(dto.status),
+        type: 'ASSIGNMENT',
+        attempts: dto.currentAttempt,
+        maxAttempts: dto.maxAttempts,
+        minScore: dto.minScoreToPass,
     };
 }

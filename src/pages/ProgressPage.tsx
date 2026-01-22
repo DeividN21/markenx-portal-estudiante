@@ -1,12 +1,59 @@
-import { Trophy, TrendingUp, AlertCircle, Calendar } from 'lucide-react';
-import { mockAttempts } from '../mocks/attempts';
+import { useState, useEffect } from 'react';
+import { Trophy, TrendingUp, AlertCircle, Calendar, Loader2 } from 'lucide-react';
+import { useSession } from '../context/sessionContext';
+import { studentService } from '../services/studentService';
+import type { Attempt } from '../types';
 import clsx from 'clsx';
 
 export const ProgressPage = () => {
-  // Cálculos rápidos para las tarjetas de resumen
-  const totalGames = mockAttempts.length;
-  const wins = mockAttempts.filter(a => a.outcome === 'GANASTE').length;
-  const avgScore = (mockAttempts.reduce((acc, curr) => acc + curr.score, 0) / totalGames) * 100;
+  const { user } = useSession();
+  const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    setLoading(true);
+    setError(null);
+
+    studentService.getAttemptsByStudent(user.id)
+      .then(data => {
+        setAttempts(data);
+      })
+      .catch(err => {
+        console.error('Error al obtener intentos:', err);
+        setError('No se pudieron cargar los intentos.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [user?.id]);
+
+  // Cálculos para las tarjetas de resumen
+  const totalGames = attempts.length;
+  const wins = attempts.filter(a => a.outcome === 'GANASTE').length;
+  const avgScore = totalGames > 0
+    ? (attempts.reduce((acc, curr) => acc + curr.score, 0) / totalGames) * 100
+    : 0;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <span className="ml-2 text-gray-600">Cargando historial...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <AlertCircle className="w-8 h-8 text-red-500" />
+        <span className="ml-2 text-red-600">{error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -57,53 +104,73 @@ export const ProgressPage = () => {
         <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
           <h3 className="font-bold text-slate-700">Historial de Intentos</h3>
         </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 text-xs uppercase font-bold text-gray-500">
-              <tr>
-                <th className="px-6 py-3">Misión</th>
-                <th className="px-6 py-3">Fecha</th>
-                <th className="px-6 py-3 text-center">Resultado</th>
-                <th className="px-6 py-3 text-center">Aceptación</th>
-                <th className="px-6 py-3 text-center">Presupuesto</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {mockAttempts.map((attempt) => (
-                <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-900">
-                    {attempt.taskTitle}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} className="text-gray-400" />
-                      {new Date(attempt.date).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={clsx(
-                      "px-2 py-1 rounded text-xs font-bold border",
-                      attempt.outcome === 'GANASTE' 
-                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                        : "bg-red-100 text-red-700 border-red-200"
-                    )}>
-                      {attempt.outcome}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="font-bold text-slate-700">
-                      {(attempt.score * 100).toFixed(0)}%
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-center font-mono">
-                    ${attempt.budget}
-                  </td>
+
+        {attempts.length === 0 ? (
+          <div className="px-6 py-12 text-center text-gray-500">
+            <Trophy className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <p>No tienes intentos registrados aún.</p>
+            <p className="text-sm">Completa tu primera misión para ver tu progreso aquí.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-gray-600">
+              <thead className="bg-gray-50 text-xs uppercase font-bold text-gray-500">
+                <tr>
+                  <th className="px-6 py-3">Tarea</th>
+                  <th className="px-6 py-3">Fecha</th>
+                  <th className="px-6 py-3 text-center">Resultado</th>
+                  <th className="px-6 py-3 text-center">Puntuación</th>
+                  <th className="px-6 py-3 text-center">Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {attempts.map((attempt) => (
+                  <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-medium text-slate-900">
+                      {attempt.taskTitle || `Tarea ${attempt.taskId.slice(0, 8)}...`}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} className="text-gray-400" />
+                        {new Date(attempt.date).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={clsx(
+                        "px-2 py-1 rounded text-xs font-bold border",
+                        attempt.outcome === 'GANASTE'
+                          ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                          : attempt.outcome === 'EN_PROGRESO'
+                          ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+                          : "bg-red-100 text-red-700 border-red-200"
+                      )}>
+                        {attempt.outcome}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="font-bold text-slate-700">
+                        {(attempt.score * 100).toFixed(0)}%
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={clsx(
+                        "px-2 py-1 rounded text-xs font-medium",
+                        attempt.status === 'APPROVED'
+                          ? "bg-green-50 text-green-700"
+                          : attempt.status === 'DISAPPROVED'
+                          ? "bg-red-50 text-red-700"
+                          : "bg-gray-50 text-gray-700"
+                      )}>
+                        {attempt.status === 'APPROVED' ? 'Aprobado' :
+                         attempt.status === 'DISAPPROVED' ? 'Reprobado' : 'Pendiente'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

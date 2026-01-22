@@ -21,14 +21,14 @@ export const TasksPage = () => {
       if (!user?.courseId) return;
       try {
         setLoading(true);
-        const all = await studentService.getTasksByCourse(user.courseId);
+        const all = await studentService.getTasksByStudent(user.id);
         setTasks(all.filter(t => t.type === 'ASSIGNMENT'));
       } finally {
         setLoading(false);
       }
     };
     void run();
-  }, [user?.courseId]);
+  }, [user?.id]);
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
