@@ -9,7 +9,6 @@ export interface TaskDto {
     summary?: string;
     deadline: string;
     minScoreToPass: number;
-    status: 'NOT_STARTED' | 'IN_PROGRESS' | 'OUTDATED';
     currentAttempt: number;
     maxAttempts: number;
     remainingAttemtps: number;
@@ -21,7 +20,8 @@ export interface TaskDetailDto {
     taskId: string,
     currentAttempt: number,
     maxAttempts: number,
-    remainingAttempts: number
+    remainingAttempts: number,
+    status: 'NOT_STARTED' | 'IN_PROGRESS' | 'OUTDATED';
 }
 
 /**

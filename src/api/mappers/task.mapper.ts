@@ -27,7 +27,6 @@ export function mapTaskDtoToTask(dto: TaskDto): Task {
         title: dto.title,
         description: dto.summary ?? '',
         deadline: dto.deadline,
-        status: mapApiStatusToUiStatus(dto.status),
         type: 'ASSIGNMENT',
         attempts: dto.currentAttempt,
         maxAttempts: dto.maxAttempts,
@@ -43,6 +42,7 @@ export function mapTaskDetailDtoToTaskDetail(dto: TaskDetailDto): TaskDetail {
         currentAttempt: dto.currentAttempt,
         maxAttempts: dto.maxAttempts,
         remainingAttempts: dto.remainingAttempts,
+        status: mapApiStatusToUiStatus(dto.status),
     }
 }
 
@@ -52,7 +52,6 @@ export function mapTaskListItemDtoToTask(dto: TaskDto): Task {
         title: dto.title,
         description: dto.summary ?? '',
         deadline: dto.deadline,
-        status: mapApiStatusToUiStatus(dto.status),
         type: 'ASSIGNMENT',
         attempts: dto.currentAttempt,
         maxAttempts: dto.maxAttempts,
