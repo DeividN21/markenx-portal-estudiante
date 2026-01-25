@@ -118,18 +118,6 @@ export const ProgressPage = () => {
         </p>
       </div>
 
-      {/* FILTROS */}
-      <ProgressFilters
-        outcomeFilter={outcomeFilter}
-        setOutcomeFilter={setOutcomeFilter}
-        dateFromFilter={dateFromFilter}
-        setDateFromFilter={setDateFromFilter}
-        dateToFilter={dateToFilter}
-        setDateToFilter={setDateToFilter}
-        onSearch={handleSearch}
-        onClearFilters={handleClearFilters}
-      />
-
       {/* TARJETAS DE RESUMEN (KPIs) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
@@ -162,6 +150,18 @@ export const ProgressPage = () => {
           </div>
         </div>
       </div>
+
+      {/* FILTROS */}
+      <ProgressFilters
+          outcomeFilter={outcomeFilter}
+          setOutcomeFilter={setOutcomeFilter}
+          dateFromFilter={dateFromFilter}
+          setDateFromFilter={setDateFromFilter}
+          dateToFilter={dateToFilter}
+          setDateToFilter={setDateToFilter}
+          onSearch={handleSearch}
+          onClearFilters={handleClearFilters}
+      />
 
       {/* TABLA DE HISTORIAL */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
