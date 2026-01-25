@@ -1,20 +1,6 @@
 import type {AttemptServiceDTO} from "../models/dtos/AttemptServiceDTO.ts";
 
 const taskServiceMock = {
-
-    getTaskAttempt: async (attemptId: string): Promise<AttemptServiceDTO> => {
-        return mockAttempts.find(attempt => attempt.id === attemptId) ||
-            {
-                id: "64120a0f-42ea-4cf6-adaf-5eb59e19acc6",
-                taskId: "0747b3ba-8e54-4d0c-941f-c42afb2889ed",
-                startedAt: "2026-02-01T13:00:20",
-                finishedAt: "2026-02-01T13:20:10",
-                status: "DISAPPROVED",
-                outcome: "LOSE",
-                score: 0.1
-            }
-    },
-
     getTaskAttempts: async (taskId: string): Promise<AttemptServiceDTO[]> => {
         return mockAttempts.filter(attempt => attempt.taskId === taskId);
     }
