@@ -31,7 +31,9 @@ export const TasksPage = () => {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
-      if (statusFilter) return false;
+      if (statusFilter && task.status !== statusFilter) {
+        return false;
+      }
 
       if (dateFilter) {
         const taskDate = new Date(task.deadline).toISOString().split('T')[0];

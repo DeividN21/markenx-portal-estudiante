@@ -30,9 +30,11 @@ export const TaskFilters = ({
           className="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block p-2.5 transition-colors"
         >
           <option value="">Todos los estados</option>
-          <option value="PENDING">Habilitadas</option>
+          <option value="NOT_STARTED">Sin empezar</option>
+          <option value="IN_PROGRESS">En curso</option>
           <option value="COMPLETED">Completadas</option>
-          <option value="EXPIRED">Vencidas</option>
+          <option value="FAILED">Fallidas</option>
+          <option value="OUTDATED">Vencidas</option>
         </select>
       </div>
 
