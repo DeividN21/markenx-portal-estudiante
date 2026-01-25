@@ -1,23 +1,26 @@
 import clsx from 'clsx';
+import type {TaskStatus} from "../../models/dtos/TaskServiceDTO.ts";
 
 interface BadgeProps {
-  status: 'PENDING' | 'COMPLETED' | 'EXPIRED' | 'FAILED';
+  status: TaskStatus;
   className?: string;
 }
 
 export const Badge = ({ status, className }: BadgeProps) => {
   const styles = {
+    NOT_STARTED: 'bg-blue-100 text-blue-700 border-blue-200',
+    IN_PROGRESS: 'bg-blue-100 text-blue-700 border-blue-200',
     COMPLETED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    PENDING: 'bg-blue-100 text-blue-700 border-blue-200',    
-    EXPIRED: 'bg-red-100 text-red-700 border-red-200',
     FAILED: 'bg-red-100 text-red-700 border-red-200',
+    OUTDATED: 'bg-red-100 text-red-700 border-red-200',
   };
 
   const labels = {
-    PENDING: 'HABILITADA',
+    NOT_STARTED: 'SIN EMPEZAR',
+    IN_PROGRESS: 'EN CURSO',
     COMPLETED: 'COMPLETADA',
-    EXPIRED: 'VENCIDA',
     FAILED: 'FALLIDA',
+    OUTDATED: 'VENCIDA',
   };
 
   return (
