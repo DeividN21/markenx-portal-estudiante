@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, TrendingUp, DollarSign, Clock, Target, Trophy, Loader2, AlertCircle } from 'lucide-react';
+import { useParams, useLocation } from 'react-router-dom';
+import { TrendingUp, DollarSign, Clock, Target, Trophy, Loader2, AlertCircle } from 'lucide-react';
 import { attemptService } from '../services/attemptService';
 import type { MetricServiceDTO } from '../models/dtos/MetricServiceDTO';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import manHappyImg from '../assets/man-happy.png';
 import manDisappointedImg from '../assets/man-dissapointed.png';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 
 export const MetricsPage = () => {
   const { attemptId } = useParams();
-  const navigate = useNavigate();
+  const location = useLocation();
 
   const [metrics, setMetrics] = useState<MetricServiceDTO | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,16 +55,22 @@ export const MetricsPage = () => {
     );
   }
 
+  // Determinar breadcrumb basado en el origen
+  const breadcrumbItems = location.state?.fromTaskDetail
+    ? [
+        { label: 'Tareas', path: '/tasks' },
+        { label: 'Detalles', path: location.state.taskPath },
+        { label: 'Desempeño' }
+      ]
+    : [
+        { label: 'Progreso', path: '/progress' },
+        { label: 'Desempeño' }
+      ];
+
   return (
     <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Botón Volver */}
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center text-gray-500 hover:text-brand-primary mb-6 transition-colors group"
-      >
-        <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-        Volver al historial
-      </button>
+      {/* Breadcrumb */}
+      <Breadcrumb items={breadcrumbItems} />
 
       {/* Cabecera */}
       <div className="mb-8">

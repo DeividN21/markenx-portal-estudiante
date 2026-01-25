@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { studentService } from '../services/studentService';
 import clsx from 'clsx';
 import {useSession} from "../sessions/useSession.ts";
@@ -111,6 +112,8 @@ export const ProgressPage = () => {
 
   return (
     <div className="animate-in fade-in duration-500">
+      <Breadcrumb items={[{ label: 'Progreso' }]} />
+      
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
           Mi Progreso
@@ -209,7 +212,7 @@ export const ProgressPage = () => {
                 {filteredAttempts.map((attempt) => (
                   <tr 
                     key={attempt.id} 
-                    onClick={() => navigate(`/metrics/${attempt.id}`)}
+                    onClick={() => navigate(`/metrics/${attempt.id}`, { state: { fromTaskDetail: false } })}
                     className="hover:bg-gray-50 transition-colors cursor-pointer group"
                   >
                     <td className="px-6 py-4 font-medium text-slate-900 group-hover:text-brand-primary transition-colors">

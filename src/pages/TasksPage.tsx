@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TaskFilters } from '../components/ui/TaskFilters';
 import { TaskCard } from '../components/ui/TaskCard';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { studentService } from '../services/studentService';
 import {useSession} from "../sessions/useSession.ts";
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
@@ -88,6 +89,8 @@ export const TasksPage = () => {
 
   return (
       <div className="animate-in fade-in duration-500">
+        <Breadcrumb items={[{ label: 'Tareas' }]} />
+        
         <div className="mb-8">
           <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
             Tareas

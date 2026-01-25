@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
+import { Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { studentService } from '../services/studentService';
 import { taskService } from '../services/taskService';
 import { Badge } from '../components/ui/Badge';
@@ -72,14 +73,11 @@ export const TaskDetailPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Botón Volver */}
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center text-gray-500 hover:text-brand-primary mb-6 transition-colors group"
-      >
-        <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-        Volver a la lista
-      </button>
+      {/* Breadcrumb */}
+      <Breadcrumb items={[
+        { label: 'Tareas', path: '/tasks' },
+        { label: 'Detalles' }
+      ]} />
 
       {/* Tarjeta Principal */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -231,7 +229,9 @@ export const TaskDetailPage = () => {
                   <tr 
                     key={attempt.id} 
                     className="hover:bg-gray-50 transition-colors cursor-pointer group"
-                    onClick={() => navigate(`/metrics/${attempt.id}`)}
+                    onClick={() => navigate(`/metrics/${attempt.id}`, { 
+                      state: { fromTaskDetail: true, taskPath: `/tasks/${taskId}` } 
+                    })}
                   >
                     <td className="px-6 py-4 text-gray-700 group-hover:text-brand-primary transition-colors">
                       {new Date(attempt.startedAt).toLocaleDateString('es-ES', { 
