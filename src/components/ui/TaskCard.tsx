@@ -1,5 +1,6 @@
 import { Calendar, RefreshCw } from 'lucide-react';
 import type {TaskServiceDTO} from "../../models/dtos/TaskServiceDTO.ts";
+import { Badge } from './Badge';
 
 interface TaskCardProps {
   task: TaskServiceDTO;
@@ -18,7 +19,7 @@ export const TaskCard = ({ task, onClick }: TaskCardProps) => {
           <h3 className="text-lg font-bold text-brand-primary group-hover:text-brand-secondary transition-colors">
             {task.title}
           </h3>
-          {/* <Badge status={task.status} /> */}
+          <Badge status={task.status} />
         </div>
         <p className="text-gray-500 text-sm line-clamp-2">
           {task.summary}
