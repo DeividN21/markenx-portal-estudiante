@@ -18,14 +18,6 @@ const sessionService = {
         return apiClient.request<StudentServiceDTO>('/students/me', { method: 'GET' });
     },
 
-    /**
-     * Logout federado (Keycloak) debe ser navegación TOP-LEVEL, no fetch,
-     * para que los redirects 302 del IdP funcionen correctamente.
-     *
-     * Implementación:
-     * - Enviamos un POST real a /auth/logout mediante un form oculto.
-     * - El backend redirige a Keycloak logout + post_logout_redirect_uri (frontend).
-     */
     logoutFederated: (postLogoutRedirectUrl: string) => {
         const logoutUrl = apiClient.buildUrl('/auth/logout');
 
@@ -33,8 +25,6 @@ const sessionService = {
         form.method = 'POST';
         form.action = logoutUrl;
 
-        // Redirigir al frontend tras logout (tu success handler ya lo hace;
-        // esto sirve si más adelante decides leerlo en backend)
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'redirect';
