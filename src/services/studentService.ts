@@ -1,7 +1,6 @@
 import type { Attempt } from '../types';
 import { apiClient } from './apiClient.ts';
 import type { StudentAttemptDto } from '../api/dtos/attempt.dto';
-import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';
 import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
 import {studentServiceMock} from "../__mocks__/studentServiceMock.ts";
@@ -22,21 +21,6 @@ export const studentService = {
     return await apiClient.request<TaskServiceDTO[]>(
         `/students/${studentId}/tasks`, { method: 'GET' }
     );
-  },
-
-  getMetricsByAttempt: async (attemptId: string): Promise<AttemptMetricsDto> => {
-    if (USE_MOCK) {
-      return {
-        attemptId,
-        profileDiscoveryPercentage: 0.8,
-        finalAcceptance: 0.8,
-        remainingBudget: 200,
-        totalTurnsUsed: 5,
-        finalOutcome: 'APPROVED',
-        sessionDate: new Date().toISOString(),
-      };
-    }
-    return apiClient.request<AttemptMetricsDto>(`/attempts/${attemptId}/metrics`, { method: 'GET' });
   },
 
   getAttemptsByStudent: async (studentId: string): Promise<Attempt[]> => {
