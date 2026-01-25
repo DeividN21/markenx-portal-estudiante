@@ -119,6 +119,8 @@ export const ProgressPage = () => {
                 <tr>
                   <th className="px-6 py-3">Tarea</th>
                   <th className="px-6 py-3">Fecha</th>
+                  <th className="px-6 py-3">Hora Inicio</th>
+                  <th className="px-6 py-3">Hora Final</th>
                   <th className="px-6 py-3 text-center">Resultado</th>
                   <th className="px-6 py-3 text-center">Puntuación</th>
                 </tr>
@@ -132,8 +134,26 @@ export const ProgressPage = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Calendar size={14} className="text-gray-400" />
-                        {new Date(attempt.startedAt).toLocaleDateString()}
+                        {new Date(attempt.startedAt).toLocaleDateString('es-ES', { 
+                          day: '2-digit', 
+                          month: '2-digit', 
+                          year: 'numeric' 
+                        })}
                       </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-700">
+                      {new Date(attempt.startedAt).toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        second: '2-digit'
+                      })}
+                    </td>
+                    <td className="px-6 py-4 text-gray-700">
+                      {new Date(attempt.finishedAt).toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        second: '2-digit'
+                      })}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={clsx(
