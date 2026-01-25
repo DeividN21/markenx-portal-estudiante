@@ -30,7 +30,8 @@ const studentServiceMock = {
             status: "NOT_STARTED",
             currentAttempt: 0,
             maxAttempts: 8,
-            remainingAttempts: 8
+            remainingAttempts: 8,
+            scenarioId: "4f632f47-2220-4e15-b381-f89d8f20eabe"
         }
     },
 
@@ -53,7 +54,8 @@ const mockTasks: TaskServiceDTO[] = [
         status: "IN_PROGRESS",
         currentAttempt: 2,
         maxAttempts: 5,
-        remainingAttempts: 3
+        remainingAttempts: 3,
+        scenarioId: "4f632f47-2220-4e15-b381-f89d8f20eabe"
     },
     {
         id: "84e1be90-0cd0-459f-b976-11ccb1fb74fe",
@@ -64,7 +66,8 @@ const mockTasks: TaskServiceDTO[] = [
         status: "NOT_STARTED",
         currentAttempt: 0,
         maxAttempts: 8,
-        remainingAttempts: 8
+        remainingAttempts: 8,
+        scenarioId: "4f632f47-2220-4e15-b381-f89d8f20eabe"
     },
     {
         id: "7880d421-89c6-4cee-b994-7377cedbdbcb",
@@ -75,7 +78,8 @@ const mockTasks: TaskServiceDTO[] = [
         status: "COMPLETED",
         currentAttempt: 2,
         maxAttempts: 5,
-        remainingAttempts: 3
+        remainingAttempts: 3,
+        scenarioId: "4f632f47-2220-4e15-b381-f89d8f20eabe"
     },
     {
         id: "1903be90-0056-4072-af12-867ff10e9e96",
@@ -86,7 +90,8 @@ const mockTasks: TaskServiceDTO[] = [
         status: "FAILED",
         currentAttempt: 3,
         maxAttempts: 3,
-        remainingAttempts: 0
+        remainingAttempts: 0,
+        scenarioId: "4f632f47-2220-4e15-b381-f89d8f20eabe"
     },
     {
         id: "7378940c-0da2-4187-9dea-06128de79aef",
@@ -97,7 +102,8 @@ const mockTasks: TaskServiceDTO[] = [
         status: "OUTDATED",
         currentAttempt: 0,
         maxAttempts: 3,
-        remainingAttempts: 3
+        remainingAttempts: 3,
+        scenarioId: "4f632f47-2220-4e15-b381-f89d8f20eabe"
     }
 ];
 
