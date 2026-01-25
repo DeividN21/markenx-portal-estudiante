@@ -1,8 +1,8 @@
-interface AuthServiceDTO {
+interface SessionServiceDTO {
     username: string;
     email: string;
     fullName: string;
     roles: string[];
 }
 
-export type { AuthServiceDTO }
+export type { SessionServiceDTO }
