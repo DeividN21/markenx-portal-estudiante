@@ -1,14 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { SessionProvider, useSession } from './sessions/sessionProvider.tsx';
 import { MainLayout } from './components/layout/MainLayout';
-
-// Páginas
 import { TasksPage } from './pages/TasksPage';
-import { EvaluationsPage } from './pages/EvaluationsPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { TaskDetailPage } from './pages/TaskDetailPage';
 import { GamePage } from './pages/GamePage';
 import { LoggedOutPage } from './pages/LoggedOutPage';
+import {useSession} from "./sessions/useSession.ts";
+import { SessionProvider } from "./sessions/sessionProvider.tsx";
 
 /**
  * RequireSession
@@ -47,7 +45,6 @@ function App() {
                 <Route path="/tasks" element={<TasksPage />} />
                 <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
                 <Route path="/game/:taskId" element={<GamePage />} />
-                <Route path="/evaluations" element={<EvaluationsPage />} />
                 <Route path="/progress" element={<ProgressPage />} />
               </Route>
             </Route>
