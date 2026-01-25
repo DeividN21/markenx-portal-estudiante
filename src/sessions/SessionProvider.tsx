@@ -19,7 +19,7 @@ interface SessionContextType {
     logout: () => void;
 }
 
-const SessionContext = createContext<SessionContextType | null>(null);
+const SessionProvider = createContext<SessionContextType | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
@@ -64,11 +64,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         };
     }, [loading, user]);
 
-    return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
+    return <SessionProvider.Provider value={value}>{children}</SessionProvider.Provider>;
 }
 
 export function useSession() {
-    const ctx = useContext(SessionContext);
+    const ctx = useContext(SessionProvider);
     if (!ctx) throw new Error('useSession must be used within SessionProvider');
     return ctx;
 }

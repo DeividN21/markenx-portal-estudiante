@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { TaskFilters } from '../components/ui/TaskFilters';
 import { TaskCard } from '../components/ui/TaskCard';
 import { studentService } from '../services/studentService';
-import { useSession } from '../sessions/sessionContext';
+import { useSession } from '../sessions/sessionProvider.tsx';
 import type { Task } from '../types';
 
 export const TasksPage = () => {
