@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import { sessionService } from '../services/sessionService';
 
 export interface SessionUser {
-    id: string;              // studentId
-    name: string;            // fullName
+    id: string;
+    name: string;
     email: string;
     roles: string[];
     courseId?: string;
@@ -28,36 +28,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const refresh = async () => {
         setLoading(true);
         try {
-            // 1) Auth (roles + identidad)
             const auth = await sessionService.getAuthMe();
-            console.log('[SessionContext] auth response:', auth);
-
-            // 2) Dominio: studentId + courseId (recomendado que venga aquí)
             const student = await sessionService.getStudentProfile();
-            console.log('[SessionContext] student response:', student);
-
-            // 3) Curso (nombre visible en Header)
-            const course = student.enrolledCourse;
-            console.log('[SessionContext] course response:', course);
-
-            // fullName viene de student.fullName o auth.fullName
             const fullName = student.fullName || auth.fullName || 'Estudiante';
-
-            // courseId viene del endpoint /students/{id}/course
-            const courseId = course.id;
-            console.log('[SessionContext] resolved courseId:', courseId);
 
             setUser({
                 id: student.id,
                 email: student.email,
                 name: fullName,
                 roles: auth.roles ?? [],
-                courseId,
-                courseName: course.label,
+                courseId: student.enrolledCourse.id,
+                courseName: student.enrolledCourse.label,
             });
         } finally {
-            // Si no hay sesión, apiClient ya redirige al login (no llegas aquí usualmente),
-            // pero dejamos robustez para escenarios edge.
             setLoading(false);
         }
     };
@@ -67,7 +50,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const logout = () => {
-        // Debe ser navegación real para permitir 302 hacia Keycloak y regreso a frontend
         const redirect = `${window.location.origin}/logged-out`;
         sessionService.logoutFederated(redirect);
     };
