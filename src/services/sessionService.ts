@@ -1,25 +1,17 @@
 import { apiClient } from './apiClient.ts';
-import type { AuthMeResponse } from '../api/dtos/auth.dto';
 import type { StudentProfileResponse } from '../api/dtos/student.dto';
 import type { CourseResponse } from '../api/dtos/course.dto';
 
+import type {SessionServiceDTO} from "../models/dtos/SessionServiceDTO.ts";
+import {sessionServiceMock} from "../__mocks__/sessionServiceMock.ts";
+
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
-export const sessionService = {
-    /**
-     * Devuelve info de autenticación (roles) desde el BFF.
-     * Si no hay sesión, apiClient redirige al login automáticamente.
-     */
-    getAuthMe: async (): Promise<AuthMeResponse> => {
-        if (USE_MOCK) {
-            return {
-                username: 'mock.user',
-                email: 'mock@udla.edu.ec',
-                fullName: 'Mock User',
-                roles: ['ROLE_STUDENT'],
-            };
-        }
-        return apiClient.request<AuthMeResponse>('/auth/me', { method: 'GET' });
+const sessionService = {
+
+    getAuthMe: async (): Promise<SessionServiceDTO> => {
+        if (USE_MOCK) return sessionServiceMock.getAuthMe();
+        return apiClient.request<SessionServiceDTO>('/auth/me', { method: 'GET' });
     },
 
     /**
@@ -76,3 +68,5 @@ export const sessionService = {
         form.submit();
     },
 };
+
+export { sessionService }
