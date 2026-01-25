@@ -1,5 +1,5 @@
 import type { Task, TaskDetail, Attempt } from '../types';
-import { apiClient } from '../api/apiClient';
+import { apiClient } from './apiClient.ts';
 import type { TaskDetailDto, TaskDto, TaskListItemDto } from '../api/dtos/task.dto';
 import type { AttemptDto, StudentAttemptDto } from '../api/dtos/attempt.dto';
 import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';

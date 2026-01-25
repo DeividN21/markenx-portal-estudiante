@@ -1,4 +1,4 @@
-import { apiClient } from '../api/apiClient';
+import { apiClient } from './apiClient.ts';
 import type { GameTokenResponse } from '../api/dtos/gameToken.dto';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';

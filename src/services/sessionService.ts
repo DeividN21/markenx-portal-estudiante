@@ -1,21 +1,10 @@
-import { apiClient } from '../api/apiClient';
+import { apiClient } from './apiClient.ts';
 import type { AuthMeResponse } from '../api/dtos/auth.dto';
 import type { StudentProfileResponse } from '../api/dtos/student.dto';
 import type { CourseResponse } from '../api/dtos/course.dto';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
-/**
- * sessionService
- * ------------------------------------------------------
- * Responsabilidad:
- * - Resolver el “contexto mínimo” del usuario autenticado:
- *   - auth: /auth/me (roles, identidad)
- *   - dominio: /students/me (studentId, courseId)
- *   - curso: /students/{id}/course (courseName, etc.)
- *
- * Este servicio NO guarda en localStorage.
- */
 export const sessionService = {
     /**
      * Devuelve info de autenticación (roles) desde el BFF.
