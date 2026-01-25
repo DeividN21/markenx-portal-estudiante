@@ -19,11 +19,7 @@ const sessionService = {
     },
 
     logoutFederated: (postLogoutRedirectUrl: string) => {
-        if (USE_MOCK) {
-            console.log('Simulando logout federado, redirigiendo a:', postLogoutRedirectUrl);
-            window.location.href = postLogoutRedirectUrl;
-            return;
-        }
+        if (USE_MOCK) return sessionServiceMock.logoutFederated(postLogoutRedirectUrl);
 
         const logoutUrl = apiClient.buildUrl('/auth/logout');
 
