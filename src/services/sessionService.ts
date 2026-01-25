@@ -3,6 +3,7 @@ import type { StudentProfileResponse } from '../api/dtos/student.dto';
 
 import type {SessionServiceDTO} from "../models/dtos/SessionServiceDTO.ts";
 import {sessionServiceMock} from "../__mocks__/sessionServiceMock.ts";
+import {studentServiceMock} from "../__mocks__/studentServiceMock.ts";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
@@ -14,13 +15,7 @@ const sessionService = {
     },
 
     getStudentMe: async (): Promise<StudentProfileResponse> => {
-        if (USE_MOCK) {
-            return {
-                id: 'student-1',
-                email: 'mock@udla.edu.ec',
-                fullName: 'Mock User',
-            };
-        }
+        if (USE_MOCK) return studentServiceMock.getStudentMe();
         return apiClient.request<StudentProfileResponse>('/students/me', { method: 'GET' });
     },
 
