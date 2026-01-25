@@ -1,10 +1,9 @@
 import { Calendar, RefreshCw } from 'lucide-react';
-import type { Task } from '../../types';
-import { Badge } from './Badge';
+import type {TaskServiceDTO} from "../../models/dtos/TaskServiceDTO.ts";
 
 interface TaskCardProps {
-  task: Task;
-  onClick: (task: Task) => void;
+  task: TaskServiceDTO;
+  onClick: (task: TaskServiceDTO) => void;
 }
 
 export const TaskCard = ({ task, onClick }: TaskCardProps) => {
@@ -22,7 +21,7 @@ export const TaskCard = ({ task, onClick }: TaskCardProps) => {
           {/* <Badge status={task.status} /> */}
         </div>
         <p className="text-gray-500 text-sm line-clamp-2">
-          {task.description}
+          {task.summary}
         </p>
       </div>
 
@@ -36,7 +35,7 @@ export const TaskCard = ({ task, onClick }: TaskCardProps) => {
             <span className="text-xs font-medium uppercase">Intentos</span>
           </div>
           <p className="font-bold text-slate-700">
-            {task.attempts} <span className="text-gray-400 font-normal">/ {task.maxAttempts}</span>
+            {task.currentAttempt} <span className="text-gray-400 font-normal">/ {task.maxAttempts}</span>
           </p>
         </div>
 
