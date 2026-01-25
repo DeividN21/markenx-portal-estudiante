@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient.ts';
-import type { GameTokenResponse } from '../api/dtos/gameToken.dto';
+import type {GameTokenServiceDTO} from "../models/dtos/GameTokenServiceDTO.ts";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
@@ -14,7 +14,7 @@ export const gameTokenService = {
     getGameToken: async (): Promise<string> => {
         if (USE_MOCK) return 'mock-game-token-for-development';
 
-        const response = await apiClient.request<GameTokenResponse>(
+        const response = await apiClient.request<GameTokenServiceDTO>(
             '/auth/game-token',
             { method: 'POST' }
         );
