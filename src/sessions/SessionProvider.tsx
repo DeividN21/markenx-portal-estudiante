@@ -1,25 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import type { SessionUser } from './session.types';
 import { sessionService } from '../services/sessionService';
-
-export interface SessionUser {
-    id: string;
-    name: string;
-    email: string;
-    roles: string[];
-    courseId?: string;
-    courseName?: string;
-}
-
-interface SessionContextType {
-    loading: boolean;
-    isAuthenticated: boolean;
-    user: SessionUser | null;
-    refresh: () => Promise<void>;
-    logout: () => void;
-}
-
-const SessionProvider = createContext<SessionContextType | null>(null);
+import { SessionContext } from "./sessionContext";
 
 export function SessionProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
@@ -30,12 +13,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         try {
             const auth = await sessionService.getAuthMe();
             const student = await sessionService.getStudentProfile();
-            const fullName = student.fullName || auth.fullName || 'Estudiante';
 
             setUser({
                 id: student.id,
                 email: student.email,
-                name: fullName,
+                name: student.fullName || auth.fullName || 'Estudiante',
                 roles: auth.roles ?? [],
                 courseId: student.enrolledCourse.id,
                 courseName: student.enrolledCourse.label,
@@ -54,21 +36,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         sessionService.logoutFederated(redirect);
     };
 
-    const value = useMemo<SessionContextType>(() => {
-        return {
-            loading,
-            isAuthenticated: !!user,
-            user,
-            refresh,
-            logout,
-        };
-    }, [loading, user]);
+    const value = useMemo(() => ({
+        loading,
+        isAuthenticated: !!user,
+        user,
+        refresh,
+        logout,
+    }), [loading, user]);
 
-    return <SessionProvider.Provider value={value}>{children}</SessionProvider.Provider>;
-}
-
-export function useSession() {
-    const ctx = useContext(SessionProvider);
-    if (!ctx) throw new Error('useSession must be used within SessionProvider');
-    return ctx;
+    return (
+        <SessionContext.Provider value={value}>
+            {children}
+        </SessionContext.Provider>
+    );
 }
