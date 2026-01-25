@@ -24,12 +24,6 @@ export const studentService = {
     );
   },
 
-
-  getAttemptsByTask: async (taskId: string): Promise<AttemptDto[]> => {
-    if (USE_MOCK) return [];
-    return apiClient.request<AttemptDto[]>(`/tasks/${taskId}/attempts`, { method: 'GET' });
-  },
-
   getMetricsByAttempt: async (attemptId: string): Promise<AttemptMetricsDto> => {
     if (USE_MOCK) {
       return {
