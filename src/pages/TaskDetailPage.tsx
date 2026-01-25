@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
 import { studentService } from '../services/studentService';
+import { taskService } from '../services/taskService';
 import { Badge } from '../components/ui/Badge';
 import {useSession} from "../sessions/useSession.ts";
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
+import type {AttemptServiceDTO} from "../models/dtos/AttemptServiceDTO.ts";
+import clsx from 'clsx';
 
 export const TaskDetailPage = () => {
   const { taskId } = useParams();
@@ -13,6 +16,8 @@ export const TaskDetailPage = () => {
 
   const [task, setTask] = useState<TaskServiceDTO | null>(null);
   const [loading, setLoading] = useState(true);
+  const [attempts, setAttempts] = useState<AttemptServiceDTO[]>([]);
+  const [attemptsLoading, setAttemptsLoading] = useState(true);
 
   useEffect(() => {
     const run = async () => {
@@ -28,6 +33,22 @@ export const TaskDetailPage = () => {
     };
     void run();
   }, [student?.id, taskId]);
+
+  useEffect(() => {
+    const loadAttempts = async () => {
+      if (!taskId) return;
+      try {
+        setAttemptsLoading(true);
+        const taskAttempts = await taskService.getTaskAttempts(taskId);
+        setAttempts(taskAttempts);
+      } catch (error) {
+        console.error('Error cargando intentos:', error);
+      } finally {
+        setAttemptsLoading(false);
+      }
+    };
+    void loadAttempts();
+  }, [taskId]);
 
   const handleStartGame = () => {
     if (task && task.status !== 'OUTDATED' && task.currentAttempt < task.maxAttempts) {
@@ -175,6 +196,86 @@ export const TaskDetailPage = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Tabla de Historial de Intentos */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mt-6">
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <h3 className="font-bold text-slate-700">Historial de Intentos</h3>
+        </div>
+
+        {attemptsLoading ? (
+          <div className="px-6 py-12 text-center text-gray-500">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary mx-auto"></div>
+            <p className="mt-4">Cargando intentos...</p>
+          </div>
+        ) : attempts.length === 0 ? (
+          <div className="px-6 py-12 text-center text-gray-500">
+            <Trophy className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <p>No hay intentos registrados para esta tarea.</p>
+            <p className="text-sm">Inicia la misión para ver tu progreso aquí.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-gray-600">
+              <thead className="bg-gray-50 text-xs uppercase font-bold text-gray-500">
+                <tr>
+                  <th className="px-6 py-3">Inicio</th>
+                  <th className="px-6 py-3">Final</th>
+                  <th className="px-6 py-3 text-center">Resultado</th>
+                  <th className="px-6 py-3 text-center">Puntuación</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {attempts.map((attempt) => (
+                  <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-gray-700">
+                      {new Date(attempt.startedAt).toLocaleDateString('es-ES', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric' 
+                      })}
+                      {' '}
+                      {new Date(attempt.startedAt).toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                      })}
+                    </td>
+                    <td className="px-6 py-4 text-gray-700">
+                      {new Date(attempt.finishedAt).toLocaleDateString('es-ES', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric' 
+                      })}
+                      {' '}
+                      {new Date(attempt.finishedAt).toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                      })}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={clsx(
+                        "px-2 py-1 rounded text-xs font-bold border",
+                        attempt.status === 'APPROVED'
+                          ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                          : attempt.status === 'UNKNOWN'
+                          ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+                          : "bg-red-100 text-red-700 border-red-200"
+                      )}>
+                        {attempt.outcome === 'WIN' ? 'GANASTE' : attempt.outcome === 'LOSE' ? 'PERDISTE' : attempt.outcome}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="font-bold text-slate-700">
+                        {(attempt.score * 100).toFixed(0)}%
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
