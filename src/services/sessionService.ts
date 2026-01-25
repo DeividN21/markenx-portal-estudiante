@@ -1,6 +1,5 @@
 import { apiClient } from './apiClient.ts';
 import type { StudentProfileResponse } from '../api/dtos/student.dto';
-import type { CourseResponse } from '../api/dtos/course.dto';
 
 import type {SessionServiceDTO} from "../models/dtos/SessionServiceDTO.ts";
 import {sessionServiceMock} from "../__mocks__/sessionServiceMock.ts";
@@ -14,10 +13,6 @@ const sessionService = {
         return apiClient.request<SessionServiceDTO>('/auth/me', { method: 'GET' });
     },
 
-    /**
-     * Devuelve el perfil del estudiante actual (dominio).
-     * Recomendado que el backend derive el studentId desde la sesión.
-     */
     getStudentMe: async (): Promise<StudentProfileResponse> => {
         if (USE_MOCK) {
             return {
@@ -27,18 +22,6 @@ const sessionService = {
             };
         }
         return apiClient.request<StudentProfileResponse>('/students/me', { method: 'GET' });
-    },
-
-    getCourseByStudentId: async (studentId: string): Promise<CourseResponse> => {
-        if (USE_MOCK) {
-            return {
-                courseId: 'course-1',
-                courseName: 'ISWZ3104 - MARKETING I',
-                term: '2026-1',
-                teacherName: 'Docente Mock',
-            };
-        }
-        return apiClient.request<CourseResponse>(`/students/${studentId}/course`, { method: 'GET' });
     },
 
     /**
