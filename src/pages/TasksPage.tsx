@@ -13,9 +13,15 @@ export const TasksPage = () => {
   const [tasks, setTasks] = useState<TaskServiceDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Estados temporales para los filtros (lo que el usuario edita)
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFromFilter, setDateFromFilter] = useState('');
   const [dateToFilter, setDateToFilter] = useState('');
+
+  // Estados aplicados (se actualizan al pulsar Buscar)
+  const [appliedStatusFilter, setAppliedStatusFilter] = useState('');
+  const [appliedDateFromFilter, setAppliedDateFromFilter] = useState('');
+  const [appliedDateToFilter, setAppliedDateToFilter] = useState('');
 
   useEffect(() => {
     const run = async () => {
@@ -32,35 +38,44 @@ export const TasksPage = () => {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
-      if (statusFilter && task.status !== statusFilter) {
+      if (appliedStatusFilter && task.status !== appliedStatusFilter) {
         return false;
       }
 
       // Filtro por rango de fechas
-      if (dateFromFilter || dateToFilter) {
+      if (appliedDateFromFilter || appliedDateToFilter) {
         const taskDate = new Date(task.deadline).toISOString().split('T')[0];
         
-        if (dateFromFilter && taskDate < dateFromFilter) {
+        if (appliedDateFromFilter && taskDate < appliedDateFromFilter) {
           return false;
         }
         
-        if (dateToFilter && taskDate > dateToFilter) {
+        if (appliedDateToFilter && taskDate > appliedDateToFilter) {
           return false;
         }
       }
       
       return true;
     });
-  }, [tasks, statusFilter, dateFromFilter, dateToFilter]);
+  }, [tasks, appliedStatusFilter, appliedDateFromFilter, appliedDateToFilter]);
 
   const handleTaskClick = (task: TaskServiceDTO) => navigate(
       `/tasks/${task.id}`
   );
 
+  const handleSearch = () => {
+    setAppliedStatusFilter(statusFilter);
+    setAppliedDateFromFilter(dateFromFilter);
+    setAppliedDateToFilter(dateToFilter);
+  };
+
   const handleClearFilters = () => {
     setStatusFilter('');
     setDateFromFilter('');
     setDateToFilter('');
+    setAppliedStatusFilter('');
+    setAppliedDateFromFilter('');
+    setAppliedDateToFilter('');
   };
 
   if (loading) {
@@ -87,7 +102,7 @@ export const TasksPage = () => {
             setDateFromFilter={setDateFromFilter}
             dateToFilter={dateToFilter}
             setDateToFilter={setDateToFilter}
-            onSearch={() => {}}
+            onSearch={handleSearch}
             onClearFilters={handleClearFilters}
         />
 
@@ -97,7 +112,7 @@ export const TasksPage = () => {
           ) : (
               <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
                 <p className="text-gray-400 font-medium">No se encontraron tareas con estos criterios.</p>
-                {(statusFilter || dateFromFilter || dateToFilter) && (
+                {(appliedStatusFilter || appliedDateFromFilter || appliedDateToFilter) && (
                     <button
                         onClick={handleClearFilters}
                         className="mt-4 text-brand-primary hover:underline text-sm font-bold"
