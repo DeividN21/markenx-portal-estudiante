@@ -93,7 +93,7 @@ export const TasksPage = () => {
         
         <div className="mb-8">
           <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
-            Tareas
+            Mis Tareas
           </h1>
           <p className="text-gray-500">Gestiona tus actividades pendientes y prácticas.</p>
         </div>
