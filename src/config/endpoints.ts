@@ -1,6 +1,6 @@
 import { env } from "./env";
 
-export const endpoints = {
+const endpoints = {
     apiBase: env.API_BASE_URL,
     auth: {
         me: `${env.API_BASE_URL}/auth/me`,
@@ -8,3 +8,5 @@ export const endpoints = {
         logout: `${env.API_BASE_URL}/auth/logout`,
     },
 };
+
+export { endpoints }
