@@ -1,36 +1,31 @@
-import type { Task, TaskDetail, Attempt } from '../types';
+import type { Attempt } from '../types';
 import { apiClient } from './apiClient.ts';
-import type { TaskDetailDto, TaskListItemDto } from '../api/dtos/task.dto';
 import type { AttemptDto, StudentAttemptDto } from '../api/dtos/attempt.dto';
 import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';
-import { mapTaskDetailDtoToTaskDetail, mapTaskListItemDtoToTask } from '../api/mappers/task.mapper';
 import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
+import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
+import {studentServiceMock} from "../__mocks__/studentServiceMock.ts";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
 export const studentService = {
 
-  getTaskDetailById: async (studentId: string, taskId: string): Promise<TaskDetail> => {
-    if (USE_MOCK) {
-      return {
-        studentId: studentId,
-        taskId: taskId,
-        currentAttempt: 1,
-        maxAttempts: 3,
-        remainingAttempts: 2,
-      };
-    }
-    const dto = await apiClient.request<TaskDetailDto>(`/students/${studentId}/tasks/${taskId}/progress`, { method: 'GET' });
-    return mapTaskDetailDtoToTaskDetail(dto);
+  getTaskById: async (studentId: string, taskId: string): Promise<TaskServiceDTO> => {
+    if (USE_MOCK) return studentServiceMock.getTaskById();
+    return await apiClient.request<TaskServiceDTO>(
+        `/students/${studentId}/tasks/${taskId}/progress`, { method: 'GET' }
+    );
   },
 
-  getTasksByStudent: async (studentId: string): Promise<Task[]> => {
+  getTasksByStudent: async (studentId: string): Promise<TaskServiceDTO[]> => {
     if (USE_MOCK) {
       return [];
     }
-    const dtos = await apiClient.request<TaskListItemDto[]>(`/students/${studentId}/tasks`, { method: 'GET' });
-    return dtos.map(mapTaskListItemDtoToTask);
+    return await apiClient.request<TaskServiceDTO[]>(
+        `/students/${studentId}/tasks`, { method: 'GET' }
+    );
   },
+
 
   getAttemptsByTask: async (taskId: string): Promise<AttemptDto[]> => {
     if (USE_MOCK) return [];
