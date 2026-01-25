@@ -1,8 +1,6 @@
-import type { Attempt } from '../types';
 import { apiClient } from './apiClient.ts';
-import type { StudentAttemptDto } from '../api/dtos/attempt.dto';
-import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
+import type {AttemptServiceDTO} from "../models/dtos/AttemptServiceDTO.ts";
 import {studentServiceMock} from "../__mocks__/studentServiceMock.ts";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
@@ -23,21 +21,10 @@ export const studentService = {
     );
   },
 
-  getAttemptsByStudent: async (studentId: string): Promise<Attempt[]> => {
-    if (USE_MOCK) {
-      return [
-        {
-          id: 'att-mock-1',
-          taskId: 'task-1',
-          taskTitle: 'Tarea Mock',
-          date: new Date().toISOString(),
-          outcome: 'GANASTE',
-          score: 0.85,
-          status: 'APPROVED',
-        },
-      ];
-    }
-    const dtos = await apiClient.request<StudentAttemptDto[]>(`/students/${studentId}/attempts`, { method: 'GET' });
-    return dtos.map(mapStudentAttemptDtoToAttempt);
+  getStudentAttempts: async (studentId: string): Promise<AttemptServiceDTO[]> => {
+    if (USE_MOCK) return studentServiceMock.getStudentAttempts();
+    return await apiClient.request<AttemptServiceDTO[]>(
+        `/students/${studentId}/attempts`, { method: 'GET' }
+    );
   },
 };

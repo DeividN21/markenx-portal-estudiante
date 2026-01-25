@@ -1,5 +1,7 @@
 import type {StudentServiceDTO} from "../models/dtos/StudentServiceDTO.ts";
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
+import type {AttemptServiceDTO} from "../models/dtos/AttemptServiceDTO.ts";
+import {mockAttempts} from "./taskServiceMock.ts";
 
 const studentServiceMock = {
     getStudentProfile: async (): Promise<StudentServiceDTO> => {
@@ -36,6 +38,9 @@ const studentServiceMock = {
         return mockTasks;
     },
 
+    getStudentAttempts: async (): Promise<AttemptServiceDTO[]> => {
+        return mockAttempts;
+    }
 }
 
 const mockTasks: TaskServiceDTO[] = [

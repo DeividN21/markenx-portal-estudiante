@@ -17,7 +17,7 @@ export const ProgressPage = () => {
     setLoading(true);
     setError(null);
 
-    studentService.getAttemptsByStudent(user.id)
+    studentService.getStudentAttempts(user.id)
       .then(data => {
         setAttempts(data);
       })

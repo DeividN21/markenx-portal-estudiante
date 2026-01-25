@@ -77,4 +77,4 @@ const mockAttempts: AttemptServiceDTO[] = [
     }
 ];
 
-export {taskServiceMock}
+export { taskServiceMock, mockAttempts }
