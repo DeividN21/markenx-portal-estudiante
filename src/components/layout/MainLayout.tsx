@@ -12,7 +12,7 @@ export const MainLayout = () => {
       <Sidebar />
 
       {/* 3. Área de Contenido Principal */}
-      <main className="md:ml-64 pt-20 p-8">
+      <main className="md:ml-64 pt-[95px] p-8">
         <div className="max-w-6xl mx-auto">
           {/* Aquí se renderizarán las páginas (Dashboard, Tareas, etc.) */}
           <Outlet />

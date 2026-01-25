@@ -10,7 +10,7 @@ export const Header = () => {
   };
 
   return (
-      <header className="bg-brand-primary text-white h-16 flex items-center justify-between px-6 shadow-md fixed w-full top-0 z-50">
+      <header className="bg-brand-primary text-white h-[75px] flex items-center justify-between px-6 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] fixed w-full top-0 z-50">
         <div className="flex items-center gap-4">
           <div className="font-bold text-2xl tracking-tighter">
             Marken<span className="text-gray-200 font-light">X</span>
