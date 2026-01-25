@@ -1,32 +1,14 @@
 import type { Task, TaskDetail, Attempt } from '../types';
 import { apiClient } from './apiClient.ts';
-import type { TaskDetailDto, TaskDto, TaskListItemDto } from '../api/dtos/task.dto';
+import type { TaskDetailDto, TaskListItemDto } from '../api/dtos/task.dto';
 import type { AttemptDto, StudentAttemptDto } from '../api/dtos/attempt.dto';
 import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';
-import { mapTaskDetailDtoToTaskDetail, mapTaskDtoToTask, mapTaskListItemDtoToTask } from '../api/mappers/task.mapper';
+import { mapTaskDetailDtoToTaskDetail, mapTaskListItemDtoToTask } from '../api/mappers/task.mapper';
 import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
 export const studentService = {
-
-  getTaskById: async (taskId: string): Promise<Task> => {
-    if (USE_MOCK) {
-      return {
-        id: taskId,
-        title: 'Tarea Mock',
-        description: 'Descripción de tarea mock',
-        deadline: new Date().toISOString(),
-        status: 'PENDING',
-        type: 'ASSIGNMENT',
-        attempts: 0,
-        maxAttempts: 3,
-        minScore: 0.7,
-      };
-    }
-    const dto = await apiClient.request<TaskDto>(`/tasks/${taskId}`, { method: 'GET' });
-    return mapTaskDtoToTask(dto);
-  },
 
   getTaskDetailById: async (studentId: string, taskId: string): Promise<TaskDetail> => {
     if (USE_MOCK) {
