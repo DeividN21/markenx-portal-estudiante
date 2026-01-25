@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { TaskFilters } from '../components/ui/TaskFilters';
 import { TaskCard } from '../components/ui/TaskCard';
 import { studentService } from '../services/studentService';
-import { useSession } from '../sessions/sessionProvider.tsx';
-import type { Task } from '../types';
+import {useSession} from "../sessions/useSession.ts";
+import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
 
 export const TasksPage = () => {
   const navigate = useNavigate();
   const { user } = useSession();
 
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskServiceDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState('');
@@ -18,11 +18,10 @@ export const TasksPage = () => {
 
   useEffect(() => {
     const run = async () => {
-      if (!user?.courseId) return;
       try {
         setLoading(true);
-        const all = await studentService.getStudentTasks(user.id);
-        setTasks(all.filter(t => t.type === 'ASSIGNMENT'));
+        const tasks = await studentService.getStudentTasks(user?.id);
+        setTasks(tasks);
       } finally {
         setLoading(false);
       }
@@ -32,7 +31,6 @@ export const TasksPage = () => {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
-      // if (statusFilter && task.status !== statusFilter) return false;
       if (statusFilter) return false;
 
       if (dateFilter) {
@@ -43,7 +41,9 @@ export const TasksPage = () => {
     });
   }, [tasks, statusFilter, dateFilter]);
 
-  const handleTaskClick = (task: Task) => navigate(`/tasks/${task.id}`);
+  const handleTaskClick = (task: TaskServiceDTO) => navigate(
+      `/tasks/${task.id}`
+  );
 
   if (loading) {
     return (
