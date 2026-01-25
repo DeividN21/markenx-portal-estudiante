@@ -1,4 +1,5 @@
-import { Search, Calendar, Filter, X } from 'lucide-react';
+import { Search, Filter, X } from 'lucide-react';
+import { DateRangePicker } from './DateRangePicker';
 
 interface TaskFiltersProps {
   statusFilter: string;
@@ -49,25 +50,16 @@ export const TaskFilters = ({
       {/* Filtro de Fecha - Rango */}
       <div className="flex-1 w-full">
         <label className="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1 flex items-center gap-1">
-          <Calendar size={12} /> Rango de Fecha Límite
+          Fecha Límite
         </label>
-        <div className="flex gap-2 items-center">
-          <input 
-            type="date"
-            value={dateFromFilter}
-            onChange={(e) => setDateFromFilter(e.target.value)}
-            placeholder="Desde"
-            className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2.5" 
-          />
-          <span className="text-gray-400 text-sm font-medium">-</span>
-          <input 
-            type="date"
-            value={dateToFilter}
-            onChange={(e) => setDateToFilter(e.target.value)}
-            placeholder="Hasta"
-            className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2.5" 
-          />
-        </div>
+        <DateRangePicker
+          dateFrom={dateFromFilter}
+          dateTo={dateToFilter}
+          onDateChange={(from, to) => {
+            setDateFromFilter(from);
+            setDateToFilter(to);
+          }}
+        />
       </div>
 
       {/* Botón Buscar */}

@@ -1,0 +1,197 @@
+// ============================================
+// VARIABLES DE COLORES - MARKENX STUDENT UI
+// ============================================
+
+// ----------------
+// COLORES BRAND - PALETA ROJO VINO
+// ----------------
+$brand-primary: #9e1c22;      // Rojo vino principal
+$brand-secondary: #7f151b;    // Rojo vino oscuro
+$brand-accent: #c92229;       // Rojo vino claro
+$brand-dark: #5a0f13;         // Rojo vino muy oscuro
+$brand-light: #fdf2f3;        // Rosa muy claro
+$brand-hover: #b8181f;        // Hover estado
+
+// ----------------
+// PALETA ROJO VINO - TONOS COMPLEMENTARIOS
+// ----------------
+$wine-50: #fdf2f3;
+$wine-100: #fce4e6;
+$wine-200: #f9c9cd;
+$wine-300: #f4a0a7;
+$wine-400: #ec6973;
+$wine-500: #de3d47;
+$wine-600: #c92229;
+$wine-700: #9e1c22;
+$wine-800: #7f151b;
+$wine-900: #5a0f13;
+
+// ----------------
+// COLORES DE ESTADO
+// ----------------
+
+// Estados de tareas
+$status-not-started: #6b7280;     // gray-500
+$status-in-progress: #3b82f6;     // blue-500
+$status-completed: #10b981;       // emerald-500
+$status-failed: #ef4444;          // red-500
+$status-outdated: #ef4444;        // red-500
+
+// Fondos de badges
+$status-not-started-bg: #f3f4f6;      // gray-100
+$status-in-progress-bg: #dbeafe;      // blue-100
+$status-completed-bg: #d1fae5;        // emerald-100
+$status-failed-bg: #fee2e2;           // red-100
+$status-outdated-bg: #fee2e2;         // red-100
+
+// Bordes de badges
+$status-not-started-border: #e5e7eb;  // gray-200
+$status-in-progress-border: #bfdbfe;  // blue-200
+$status-completed-border: #a7f3d0;    // emerald-200
+$status-failed-border: #fecaca;       // red-200
+$status-outdated-border: #fecaca;     // red-200
+
+// Textos de badges
+$status-not-started-text: #374151;    // gray-700
+$status-in-progress-text: #1e40af;    // blue-700
+$status-completed-text: #047857;      // emerald-700
+$status-failed-text: #b91c1c;         // red-700
+$status-outdated-text: #b91c1c;       // red-700
+
+// ----------------
+// COLORES DE SISTEMA
+// ----------------
+
+// Grises
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// Slate (usado para textos principales)
+$slate-50: #f8fafc;
+$slate-100: #f1f5f9;
+$slate-700: #334155;
+$slate-800: #1e293b;
+$slate-900: #0f172a;
+
+// Rojos (usado en calendario y alertas)
+$red-50: #fef2f2;
+$red-100: #fee2e2;
+$red-200: #fecaca;
+$red-500: #ef4444;
+$red-600: #dc2626;
+$red-700: #b91c1c;
+$red-800: #991b1b;
+
+// Azules
+$blue-50: #eff6ff;
+$blue-100: #dbeafe;
+$blue-500: #3b82f6;
+$blue-600: #2563eb;
+$blue-700: #1d4ed8;
+
+// Verdes (emerald)
+$emerald-50: #ecfdf5;
+$emerald-100: #d1fae5;
+$emerald-200: #a7f3d0;
+$emerald-500: #10b981;
+$emerald-600: #059669;
+$emerald-700: #047857;
+
+// Amarillos
+$yellow-50: #fefce8;
+$yellow-100: #fef9c3;
+$yellow-200: #fef08a;
+$yellow-500: #eab308;
+$yellow-700: #a16207;
+
+// Púrpuras
+$purple-50: #faf5ff;
+$purple-100: #f3e8ff;
+$purple-500: #a855f7;
+$purple-600: #9333ea;
+
+// Ámbar
+$amber-600: #d97706;
+
+// ----------------
+// COLORES DE CALENDARIO
+// ----------------
+$calendar-accent: $brand-primary;
+$calendar-background: $wine-100;
+$calendar-range-middle: $wine-200;
+$calendar-range-text: $wine-900;
+$calendar-hover: $wine-100;
+$calendar-selected: $brand-primary;
+$calendar-selected-hover: $brand-hover;
+
+// ----------------
+// COLORES DE FONDO
+// ----------------
+$bg-primary: #ffffff;
+$bg-secondary: $gray-50;
+$bg-tertiary: $slate-50;
+
+// ----------------
+// COLORES DE TEXTO
+// ----------------
+$text-primary: $slate-800;
+$text-secondary: $gray-500;
+$text-tertiary: $gray-400;
+$text-inverse: #ffffff;
+
+// ----------------
+// COLORES DE BORDES
+// ----------------
+$border-light: $gray-100;
+$border-default: $gray-200;
+$border-dark: $gray-300;
+
+// ----------------
+// MAPAS DE COLORES
+// ----------------
+
+// Mapa de estados para loops en SCSS
+$status-colors: (
+  'not-started': (
+    bg: $status-not-started-bg,
+    text: $status-not-started-text,
+    border: $status-not-started-border
+  ),
+  'in-progress': (
+    bg: $status-in-progress-bg,
+    text: $status-in-progress-text,
+    border: $status-in-progress-border
+  ),
+  'completed': (
+    bg: $status-completed-bg,
+    text: $status-completed-text,
+    border: $status-completed-border
+  ),
+  'failed': (
+    bg: $status-failed-bg,
+    text: $status-failed-text,
+    border: $status-failed-border
+  ),
+  'outdated': (
+    bg: $status-outdated-bg,
+    text: $status-outdated-text,
+    border: $status-outdated-border
+  )
+);
+
+// Mapa de colores brand
+$brand-colors: (
+  'primary': $brand-primary,
+  'secondary': $brand-secondary,
+  'accent': $brand-accent,
+  'dark': $brand-dark,
+  'light': $brand-light
+);
