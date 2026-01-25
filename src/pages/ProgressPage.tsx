@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Trophy, TrendingUp, AlertCircle, Calendar, Loader2 } from 'lucide-react';
+import { Trophy, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
 import { studentService } from '../services/studentService';
 import clsx from 'clsx';
 import {useSession} from "../sessions/useSession.ts";

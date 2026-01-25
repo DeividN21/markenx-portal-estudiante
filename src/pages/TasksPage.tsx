@@ -14,7 +14,8 @@ export const TasksPage = () => {
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
+  const [dateFromFilter, setDateFromFilter] = useState('');
+  const [dateToFilter, setDateToFilter] = useState('');
 
   useEffect(() => {
     const run = async () => {
@@ -35,13 +36,22 @@ export const TasksPage = () => {
         return false;
       }
 
-      if (dateFilter) {
+      // Filtro por rango de fechas
+      if (dateFromFilter || dateToFilter) {
         const taskDate = new Date(task.deadline).toISOString().split('T')[0];
-        if (taskDate !== dateFilter) return false;
+        
+        if (dateFromFilter && taskDate < dateFromFilter) {
+          return false;
+        }
+        
+        if (dateToFilter && taskDate > dateToFilter) {
+          return false;
+        }
       }
+      
       return true;
     });
-  }, [tasks, statusFilter, dateFilter]);
+  }, [tasks, statusFilter, dateFromFilter, dateToFilter]);
 
   const handleTaskClick = (task: TaskServiceDTO) => navigate(
       `/tasks/${task.id}`
@@ -67,8 +77,10 @@ export const TasksPage = () => {
         <TaskFilters
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
-            dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
+            dateFromFilter={dateFromFilter}
+            setDateFromFilter={setDateFromFilter}
+            dateToFilter={dateToFilter}
+            setDateToFilter={setDateToFilter}
             onSearch={() => {}}
         />
 
@@ -78,11 +90,12 @@ export const TasksPage = () => {
           ) : (
               <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
                 <p className="text-gray-400 font-medium">No se encontraron tareas con estos criterios.</p>
-                {(statusFilter || dateFilter) && (
+                {(statusFilter || dateFromFilter || dateToFilter) && (
                     <button
                         onClick={() => {
                           setStatusFilter('');
-                          setDateFilter('');
+                          setDateFromFilter('');
+                          setDateToFilter('');
                         }}
                         className="mt-4 text-brand-primary hover:underline text-sm font-bold"
                     >

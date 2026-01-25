@@ -3,16 +3,20 @@ import { Search, Calendar, Filter } from 'lucide-react';
 interface TaskFiltersProps {
   statusFilter: string;
   setStatusFilter: (val: string) => void;
-  dateFilter: string;
-  setDateFilter: (val: string) => void;
-  onSearch: () => void; // Función que dispara el filtrado final (opcional si es en tiempo real)
+  dateFromFilter: string;
+  setDateFromFilter: (val: string) => void;
+  dateToFilter: string;
+  setDateToFilter: (val: string) => void;
+  onSearch: () => void;
 }
 
 export const TaskFilters = ({ 
   statusFilter, 
   setStatusFilter, 
-  dateFilter, 
-  setDateFilter,
+  dateFromFilter, 
+  setDateFromFilter,
+  dateToFilter,
+  setDateToFilter,
   onSearch 
 }: TaskFiltersProps) => {
   
@@ -38,16 +42,25 @@ export const TaskFilters = ({
         </select>
       </div>
 
-      {/* Filtro de Fecha */}
+      {/* Filtro de Fecha - Rango */}
       <div className="flex-1 w-full">
         <label className="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1 flex items-center gap-1">
-          <Calendar size={12} /> Fecha Límite
+          <Calendar size={12} /> Rango de Fecha Límite
         </label>
-        <div className="relative">
+        <div className="flex gap-2 items-center">
           <input 
             type="date"
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
+            value={dateFromFilter}
+            onChange={(e) => setDateFromFilter(e.target.value)}
+            placeholder="Desde"
+            className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2.5" 
+          />
+          <span className="text-gray-400 text-sm font-medium">-</span>
+          <input 
+            type="date"
+            value={dateToFilter}
+            onChange={(e) => setDateToFilter(e.target.value)}
+            placeholder="Hasta"
             className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-brand-primary focus:border-brand-primary block w-full p-2.5" 
           />
         </div>
