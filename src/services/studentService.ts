@@ -18,9 +18,7 @@ export const studentService = {
   },
 
   getStudentTasks: async (studentId: string): Promise<TaskServiceDTO[]> => {
-    if (USE_MOCK) {
-      return [];
-    }
+    if (USE_MOCK) return studentServiceMock.getStudentTasks();
     return await apiClient.request<TaskServiceDTO[]>(
         `/students/${studentId}/tasks`, { method: 'GET' }
     );
