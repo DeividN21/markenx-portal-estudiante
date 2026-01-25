@@ -26,7 +26,7 @@ function buildLoginRedirectUrl(currentUrl: string) {
 export const apiClient = {
   buildUrl,
 
-  request: async <T = any>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+  request: async <T = never>(endpoint: string, options: RequestInit = {}): Promise<T> => {
     const url = buildUrl(endpoint);
 
     const headers: Record<string, string> = {
@@ -42,7 +42,7 @@ export const apiClient = {
 
     // Auth handling (BFF session)
     if (response.status === 401 || response.status === 403) {
-      // Si se cae en /auth/me o cualquier endpoint privado, re-lanza flujo de login
+      // Si se cae en /auth/me o cualquier endpoint privado, relanza flujo de login
       window.location.href = buildLoginRedirectUrl(window.location.href);
       throw new Error('No autenticado / No autorizado');
     }
