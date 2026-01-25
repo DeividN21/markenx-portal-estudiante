@@ -228,8 +228,12 @@ export const TaskDetailPage = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {attempts.map((attempt) => (
-                  <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-gray-700">
+                  <tr 
+                    key={attempt.id} 
+                    className="hover:bg-gray-50 transition-colors cursor-pointer group"
+                    onClick={() => navigate(`/metrics/${attempt.id}`)}
+                  >
+                    <td className="px-6 py-4 text-gray-700 group-hover:text-brand-primary transition-colors">
                       {new Date(attempt.startedAt).toLocaleDateString('es-ES', { 
                         day: '2-digit', 
                         month: '2-digit', 
@@ -241,7 +245,7 @@ export const TaskDetailPage = () => {
                         minute: '2-digit'
                       })}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
+                    <td className="px-6 py-4 text-gray-700 group-hover:text-brand-primary transition-colors">
                       {new Date(attempt.finishedAt).toLocaleDateString('es-ES', { 
                         day: '2-digit', 
                         month: '2-digit', 
@@ -266,7 +270,7 @@ export const TaskDetailPage = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="font-bold text-slate-700">
+                      <div className="font-bold text-slate-700 group-hover:text-brand-primary transition-colors">
                         {(attempt.score * 100).toFixed(0)}%
                       </div>
                     </td>
