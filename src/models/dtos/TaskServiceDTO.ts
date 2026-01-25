@@ -10,6 +10,6 @@ interface TaskServiceDTO {
     remainingAttempts: number;
 }
 
-type TaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'OUTDATED';
+type TaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'OUTDATED';
 
 export type { TaskServiceDTO }
