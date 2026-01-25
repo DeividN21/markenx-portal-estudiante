@@ -1,8 +1,8 @@
 import { LogOut, User as UserIcon } from 'lucide-react';
-import { useSession } from '../../sessions/sessionProvider.tsx';
+import {useSession} from "../../sessions/useSession.ts";
 
 export const Header = () => {
-  const { user, logout } = useSession();
+  const { student, logout } = useSession();
 
   const handleLogout = () => {
     // Logout real: navegación POST a /auth/logout para permitir 302 a Keycloak logout y retorno al frontend.
@@ -17,14 +17,14 @@ export const Header = () => {
           </div>
           <div className="h-6 w-px bg-white/30 mx-2 hidden md:block"></div>
           <div className="hidden md:block font-medium text-sm text-gray-100 uppercase tracking-wide">
-            {user?.courseName || 'Curso No Asignado'}
+            {student?.courseName || 'Curso No Asignado'}
           </div>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="text-right hidden sm:block">
             <p className="text-xs text-gray-300">Bienvenido/a</p>
-            <p className="font-semibold text-sm leading-tight">{user?.name || 'Estudiante'}</p>
+            <p className="font-semibold text-sm leading-tight">{student?.name || 'Estudiante'}</p>
           </div>
 
           <div className="flex items-center gap-3">
