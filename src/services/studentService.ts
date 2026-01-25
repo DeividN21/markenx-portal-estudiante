@@ -1,6 +1,6 @@
 import type { Attempt } from '../types';
 import { apiClient } from './apiClient.ts';
-import type { AttemptDto, StudentAttemptDto } from '../api/dtos/attempt.dto';
+import type { StudentAttemptDto } from '../api/dtos/attempt.dto';
 import type { AttemptMetricsDto } from '../api/dtos/metrics.dto';
 import { mapStudentAttemptDtoToAttempt } from '../api/mappers/attempt.mapper';
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
