@@ -5,6 +5,8 @@ import { attemptService } from '../services/attemptService';
 import type { MetricServiceDTO } from '../models/dtos/MetricServiceDTO';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import manHappyImg from '../assets/man-happy.png';
+import manDisappointedImg from '../assets/man-dissapointed.png';
 
 export const MetricsPage = () => {
   const { attemptId } = useParams();
@@ -65,29 +67,51 @@ export const MetricsPage = () => {
 
       {/* Cabecera */}
       <div className="mb-8">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
-              Detalle del Intento
-            </h1>
-            <p className="text-gray-500">
-              Fecha: {format(new Date(metrics.sessionDate), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })}
-            </p>
-          </div>
-          
-          {/* Badge de Resultado */}
-          <div className={`px-6 py-3 rounded-full text-lg font-bold border-2 ${
-            metrics.finalOutcome === 'WIN' 
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-              : 'bg-red-50 text-red-700 border-red-300'
-          }`}>
-            {metrics.finalOutcome === 'WIN' ? '🎉 GANASTE' : '😔 PERDISTE'}
-          </div>
-        </div>
+        <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
+          Desempeño
+        </h1>
+        <p className="text-gray-500">
+          Fecha: {format(new Date(metrics.sessionDate), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })}
+        </p>
       </div>
 
-      {/* Dashboard de Métricas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      {/* Layout Principal: Métricas + Imagen */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        
+        {/* Métricas - Izquierda */}
+        <div className="lg:col-span-8">
+          {/* Tarjeta contenedora de todas las métricas */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 space-y-4">
+            
+            {/* Resultado de la Simulación - Compacto */}
+            <div className={`p-3 rounded-xl border-2 ${
+              metrics.finalOutcome === 'WIN' 
+                ? 'bg-emerald-50 border-emerald-300'
+                : 'bg-red-50 border-red-300'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`p-3 rounded-full ${
+                  metrics.finalOutcome === 'WIN' ? 'bg-emerald-200' : 'bg-red-200'
+                }`}>
+                  <Trophy size={24} className={
+                    metrics.finalOutcome === 'WIN' ? 'text-emerald-700' : 'text-red-700'
+                  } />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-bold text-gray-600 uppercase mb-1">Resultado de la Simulación</h3>
+                  <p className={`text-lg font-black ${
+                    metrics.finalOutcome === 'WIN' ? 'text-emerald-700' : 'text-red-700'
+                  }`}>
+                    {metrics.finalOutcome === 'WIN' 
+                      ? '¡Felicitaciones! Completaste exitosamente' 
+                      : 'No alcanzaste el objetivo mínimo'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Grid de Métricas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         
         {/* Descubrimiento de Perfil */}
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
@@ -169,62 +193,22 @@ export const MetricsPage = () => {
           <p className="text-xs text-gray-400">Total de acciones realizadas durante la simulación</p>
         </div>
 
-        {/* Resultado Global */}
-        <div className={`p-6 rounded-xl border-2 shadow-sm hover:shadow-md transition-shadow md:col-span-2 ${
-          metrics.finalOutcome === 'WIN' 
-            ? 'bg-emerald-50 border-emerald-300'
-            : 'bg-red-50 border-red-300'
-        }`}>
-          <div className="flex items-center gap-4">
-            <div className={`p-4 rounded-full ${
-              metrics.finalOutcome === 'WIN' ? 'bg-emerald-200' : 'bg-red-200'
-            }`}>
-              <Trophy size={32} className={
-                metrics.finalOutcome === 'WIN' ? 'text-emerald-700' : 'text-red-700'
-              } />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-800 mb-1">Resultado de la Simulación</h3>
-              <p className={`text-2xl font-black ${
-                metrics.finalOutcome === 'WIN' ? 'text-emerald-700' : 'text-red-700'
-              }`}>
-                {metrics.finalOutcome === 'WIN' 
-                  ? '¡Felicitaciones! Completaste exitosamente la simulación' 
-                  : 'No alcanzaste el objetivo mínimo requerido'}
-              </p>
-            </div>
+          </div>
+          
           </div>
         </div>
 
-      </div>
-
-      {/* Tarjeta de Resumen */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <h3 className="text-lg font-bold text-slate-800 mb-4">Resumen del Desempeño</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">ID del Intento:</span>
-            <span className="font-mono text-gray-800">{metrics.id.slice(0, 8)}...</span>
-          </div>
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">Fecha de Ejecución:</span>
-            <span className="font-semibold text-gray-800">
-              {format(new Date(metrics.sessionDate), 'dd/MM/yyyy HH:mm', { locale: es })}
-            </span>
-          </div>
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">Perfil Descubierto:</span>
-            <span className="font-semibold text-gray-800">
-              {(metrics.profileDiscoveryPercentage * 100).toFixed(1)}%
-            </span>
-          </div>
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">Aceptación Lograda:</span>
-            <span className="font-semibold text-gray-800">
-              {(metrics.finalAcceptance * 100).toFixed(1)}%
-            </span>
+        {/* Imagen del Resultado - Derecha */}
+        <div className="lg:col-span-4 flex items-end justify-center">
+          <div className="w-full max-w-xs">
+            <img 
+              src={metrics.finalOutcome === 'WIN' ? manHappyImg : manDisappointedImg}
+              alt={metrics.finalOutcome === 'WIN' ? 'Éxito' : 'Intenta de nuevo'}
+              className="w-full h-auto max-h-[25rem] object-contain drop-shadow-lg"
+            />
           </div>
         </div>
+
       </div>
     </div>
   );
