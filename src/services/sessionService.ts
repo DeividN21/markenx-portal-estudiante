@@ -1,7 +1,6 @@
 import { apiClient } from './apiClient.ts';
-import type { StudentProfileResponse } from '../api/dtos/student.dto';
-
 import type {SessionServiceDTO} from "../models/dtos/SessionServiceDTO.ts";
+import type {StudentServiceDTO} from "../models/dtos/StudentServiceDTO.ts";
 import {sessionServiceMock} from "../__mocks__/sessionServiceMock.ts";
 import {studentServiceMock} from "../__mocks__/studentServiceMock.ts";
 
@@ -14,9 +13,9 @@ const sessionService = {
         return apiClient.request<SessionServiceDTO>('/auth/me', { method: 'GET' });
     },
 
-    getStudentMe: async (): Promise<StudentProfileResponse> => {
+    getStudentMe: async (): Promise<StudentServiceDTO> => {
         if (USE_MOCK) return studentServiceMock.getStudentMe();
-        return apiClient.request<StudentProfileResponse>('/students/me', { method: 'GET' });
+        return apiClient.request<StudentServiceDTO>('/students/me', { method: 'GET' });
     },
 
     /**
