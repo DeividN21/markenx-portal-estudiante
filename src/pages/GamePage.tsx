@@ -46,7 +46,7 @@ export const GamePage = () => {
 
       try {
         setLoading(true);
-        const foundTask = await studentService.getTaskById(taskId);
+        const foundTask = await studentService.getStudentTask(taskId);
         setTask(foundTask);
       } catch (err) {
         console.error('Error cargando tarea:', err);

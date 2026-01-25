@@ -21,7 +21,7 @@ export const TasksPage = () => {
       if (!user?.courseId) return;
       try {
         setLoading(true);
-        const all = await studentService.getTasksByStudent(user.id);
+        const all = await studentService.getStudentTasks(user.id);
         setTasks(all.filter(t => t.type === 'ASSIGNMENT'));
       } finally {
         setLoading(false);

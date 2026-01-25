@@ -36,7 +36,7 @@ export const TaskDetailPage = () => {
       if (!taskId) return;
       try {
         setLoading(true);
-        const foundTask = await studentService.getTaskById(taskId);
+        const foundTask = await studentService.getStudentTask(taskId);
         const detail = await studentService.getTaskDetailById(user.id, taskId);
         setTask(createTaskSummary(foundTask, detail) || null);
       } catch (error) {
