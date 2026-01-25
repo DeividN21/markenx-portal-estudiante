@@ -1,4 +1,4 @@
-import { Search, Calendar, Filter } from 'lucide-react';
+import { Search, Calendar, Filter, X } from 'lucide-react';
 
 interface TaskFiltersProps {
   statusFilter: string;
@@ -8,6 +8,7 @@ interface TaskFiltersProps {
   dateToFilter: string;
   setDateToFilter: (val: string) => void;
   onSearch: () => void;
+  onClearFilters: () => void;
 }
 
 export const TaskFilters = ({ 
@@ -17,8 +18,11 @@ export const TaskFilters = ({
   setDateFromFilter,
   dateToFilter,
   setDateToFilter,
-  onSearch 
+  onSearch,
+  onClearFilters
 }: TaskFiltersProps) => {
+  
+  const hasActiveFilters = statusFilter || dateFromFilter || dateToFilter;
   
   return (
     <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-end md:items-center">
@@ -74,6 +78,17 @@ export const TaskFilters = ({
         <Search size={18} />
         Buscar
       </button>
+
+      {/* Botón Limpiar Filtros */}
+      {hasActiveFilters && (
+        <button 
+          onClick={onClearFilters}
+          className="w-full md:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 active:scale-95"
+        >
+          <X size={18} />
+          Limpiar
+        </button>
+      )}
 
     </div>
   );

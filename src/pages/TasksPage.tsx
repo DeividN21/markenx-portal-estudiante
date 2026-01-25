@@ -57,6 +57,12 @@ export const TasksPage = () => {
       `/tasks/${task.id}`
   );
 
+  const handleClearFilters = () => {
+    setStatusFilter('');
+    setDateFromFilter('');
+    setDateToFilter('');
+  };
+
   if (loading) {
     return (
         <div className="flex justify-center items-center h-64">
@@ -82,6 +88,7 @@ export const TasksPage = () => {
             dateToFilter={dateToFilter}
             setDateToFilter={setDateToFilter}
             onSearch={() => {}}
+            onClearFilters={handleClearFilters}
         />
 
         <div className="space-y-4">
@@ -92,11 +99,7 @@ export const TasksPage = () => {
                 <p className="text-gray-400 font-medium">No se encontraron tareas con estos criterios.</p>
                 {(statusFilter || dateFromFilter || dateToFilter) && (
                     <button
-                        onClick={() => {
-                          setStatusFilter('');
-                          setDateFromFilter('');
-                          setDateToFilter('');
-                        }}
+                        onClick={handleClearFilters}
                         className="mt-4 text-brand-primary hover:underline text-sm font-bold"
                     >
                       Limpiar filtros
