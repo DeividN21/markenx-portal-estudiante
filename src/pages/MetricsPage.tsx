@@ -68,7 +68,7 @@ export const MetricsPage = () => {
       {/* Cabecera */}
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold text-slate-900 uppercase tracking-tight mb-2">
-          Desempeño
+          Tu Desempeño
         </h1>
         <p className="text-gray-500">
           Fecha: {format(new Date(metrics.sessionDate), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })}
@@ -103,7 +103,7 @@ export const MetricsPage = () => {
                     metrics.finalOutcome === 'WIN' ? 'text-emerald-700' : 'text-red-700'
                   }`}>
                     {metrics.finalOutcome === 'WIN' 
-                      ? '¡Felicitaciones! Completaste exitosamente' 
+                      ? '¡Felicitaciones! Completaste la misión exitosamente' 
                       : 'No alcanzaste el objetivo mínimo'}
                   </p>
                 </div>
