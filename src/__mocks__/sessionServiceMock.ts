@@ -9,6 +9,12 @@ const sessionServiceMock = {
             roles: ['ROLE_STUDENT'],
         };
     },
+
+    logoutFederated: (postLogoutRedirectUrl: string) => {
+        console.log('Simulando logout federado, redirigiendo a:', postLogoutRedirectUrl);
+        window.location.href = postLogoutRedirectUrl;
+        return;
+    }
 };
 
 export { sessionServiceMock }
