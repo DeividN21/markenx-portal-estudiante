@@ -10,7 +10,7 @@ interface SessionUser {
 interface SessionContextType {
     loading: boolean;
     isAuthenticated: boolean;
-    user: SessionUser | null;
+    student: SessionUser | null;
     refresh: () => Promise<void>;
     logout: () => void;
 }

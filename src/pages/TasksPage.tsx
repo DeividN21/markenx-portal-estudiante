@@ -8,7 +8,7 @@ import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
 
 export const TasksPage = () => {
   const navigate = useNavigate();
-  const { user } = useSession();
+  const { student } = useSession();
 
   const [tasks, setTasks] = useState<TaskServiceDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,14 +20,14 @@ export const TasksPage = () => {
     const run = async () => {
       try {
         setLoading(true);
-        const tasks = await studentService.getStudentTasks(user?.id);
+        const tasks = await studentService.getStudentTasks(student?.id);
         setTasks(tasks);
       } finally {
         setLoading(false);
       }
     };
     void run();
-  }, [user?.id]);
+  }, [student?.id]);
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {

@@ -1,55 +1,36 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
-import { useSession } from '../sessions/sessionProvider.tsx';
 import { studentService } from '../services/studentService';
 import { Badge } from '../components/ui/Badge';
-import type { Task, TaskDetail, TaskSummary } from '../types';
-
-function createTaskSummary(task: Task, detail: TaskDetail): TaskSummary {
-  return {
-    id: task.id,
-    title: task.title,
-    description: task.description,
-    deadline: task.deadline,
-    status: task.status,
-    type: task.type,
-    minScore: task.minScore,
-    scenarioId: task.scenarioId,
-    studentId: detail.studentId,
-    currentAttempt: detail.currentAttempt,
-    maxAttempts: detail.maxAttempts,
-  };
-}
+import {useSession} from "../sessions/useSession.ts";
+import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
 
 export const TaskDetailPage = () => {
   const { taskId } = useParams();
-  const { user } = useSession();
+  const { student } = useSession();
   const navigate = useNavigate();
 
-  const [task, setTask] = useState<TaskSummary | null>(null);
+  const [task, setTask] = useState<TaskServiceDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Cargar tarea individual
   useEffect(() => {
-    const loadTask = async () => {
-      if (!taskId) return;
+    const run = async () => {
       try {
         setLoading(true);
-        const foundTask = await studentService.getStudentTask(taskId);
-        const detail = await studentService.getTaskDetailById(user.id, taskId);
-        setTask(createTaskSummary(foundTask, detail) || null);
+        const task = await studentService.getStudentTask(student?.id, taskId);
+        setTask(task || null);
       } catch (error) {
         console.error('Error cargando detalle:', error);
       } finally {
         setLoading(false);
       }
     };
-    loadTask();
-  }, [taskId]);
+    void run();
+  }, [student?.id, taskId]);
 
   const handleStartGame = () => {
-    if (task && task.status !== 'EXPIRED' && task.currentAttempt < task.maxAttempts) {
+    if (task && task.status !== 'OUTDATED' && task.currentAttempt < task.maxAttempts) {
       navigate(`/game/${task.id}`);
     }
   };
@@ -90,29 +71,22 @@ export const TaskDetailPage = () => {
               </h1>
               <Badge status={task.status} />
             </div>
-            <p className="text-gray-500 font-medium flex items-center gap-2">
-              {task.type === 'ASSIGNMENT' ? 'Práctica Académica' : 'Evaluación Oficial'}
-              {task.type === 'EVALUATION' && (
-                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">
-                  ¡INTENTO ÚNICO!
-                </span>
-              )}
-            </p>
+            <p className="text-gray-500 font-medium flex items-center gap-2">Práctica Académica</p>
           </div>
 
           {/* Botón de Acción Principal */}
           <button
             onClick={handleStartGame}
-            disabled={task.status === 'EXPIRED' || isAttemptsLimitReached}
+            disabled={task.status === 'OUTDATED' || isAttemptsLimitReached}
             className={`
               group relative inline-flex items-center justify-center px-8 py-3 font-bold text-white transition-all duration-200 rounded-full shadow-lg focus:outline-none ring-offset-2 focus:ring-2
-              ${task.status === 'EXPIRED' || isAttemptsLimitReached
+              ${task.status === 'OUTDATED' || isAttemptsLimitReached
                 ? 'bg-gray-400 cursor-not-allowed opacity-70'
                 : 'bg-brand-primary hover:bg-brand-secondary hover:shadow-brand-primary/40 hover:-translate-y-1'
               }
             `}
           >
-            {task.status === 'EXPIRED' ? (
+            {task.status === 'OUTDATED' ? (
               <span className="flex items-center gap-2">
                 <AlertCircle size={20} /> Misión Cerrada
               </span>
@@ -137,7 +111,7 @@ export const TaskDetailPage = () => {
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
                 Briefing de la Misión
               </h3>
-              <p className="text-gray-700 leading-relaxed text-lg">{task.description}</p>
+              <p className="text-gray-700 leading-relaxed text-lg">{task.summary}</p>
               <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
                 <h4 className="font-bold text-blue-800 text-sm mb-1">Instrucciones Adicionales:</h4>
                 <p className="text-sm text-blue-700">
@@ -196,7 +170,7 @@ export const TaskDetailPage = () => {
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase">Nota Mínima</p>
-                <p className="font-bold text-slate-800 text-lg">{(task.minScore * 100).toFixed(0)}/100</p>
+                <p className="font-bold text-slate-800 text-lg">{(task.minScoreToPass * 100).toFixed(0)}/100</p>
               </div>
             </div>
           </div>
