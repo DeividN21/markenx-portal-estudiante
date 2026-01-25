@@ -2,7 +2,98 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================ */
+/* VARIABLES DE COLORES CSS                     */
+/* ============================================ */
+:root {
+  /* Colores Brand - Paleta Rojo Vino */
+  --brand-primary: #9e1c22;      /* Rojo vino principal */
+  --brand-secondary: #7f151b;    /* Rojo vino oscuro */
+  --brand-accent: #c92229;       /* Rojo vino claro */
+  --brand-dark: #5a0f13;         /* Rojo vino muy oscuro */
+  --brand-light: #fdf2f3;        /* Rosa muy claro */
+  --brand-hover: #b8181f;        /* Hover estado */
+
+  /* Grises - Para textos y fondos neutros */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+
+  /* Slate - Para textos principales */
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+
+  /* Paleta Rojo Vino - Tonos complementarios */
+  --wine-50: #fdf2f3;
+  --wine-100: #fce4e6;
+  --wine-200: #f9c9cd;
+  --wine-300: #f4a0a7;
+  --wine-400: #ec6973;
+  --wine-500: #de3d47;
+  --wine-600: #c92229;
+  --wine-700: #9e1c22;
+  --wine-800: #7f151b;
+  --wine-900: #5a0f13;
+
+  /* Calendario - Usa paleta rojo vino */
+  --calendar-accent: var(--brand-primary);
+  --calendar-background: var(--wine-100);
+  --calendar-range-middle: var(--wine-200);
+  --calendar-range-text: var(--wine-900);
+  --calendar-hover: var(--wine-100);
+  --calendar-selected: var(--brand-primary);
+  --calendar-selected-hover: var(--brand-hover);
+}
+
 /* Estilos globales básicos */
 body {
   @apply bg-gray-50 text-slate-800 antialiased;
+}
+
+/* Estilos para react-day-picker */
+.rdp-custom {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: var(--calendar-accent);
+  --rdp-background-color: var(--calendar-background);
+}
+
+.rdp-custom .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: var(--gray-100);
+}
+
+.rdp-custom .rdp-day_selected {
+  background-color: var(--calendar-selected);
+  color: white;
+  font-weight: 600;
+}
+
+.rdp-custom .rdp-day_selected:hover {
+  background-color: var(--calendar-selected-hover);
+}
+
+.rdp-custom .rdp-day_button {
+  color: var(--calendar-accent);
+}
+
+.rdp-custom .rdp-day_button:hover {
+  background-color: var(--calendar-hover);
+}
+
+.rdp-custom .rdp-range_start .rdp-day_button,
+.rdp-custom .rdp-range_end .rdp-day_button {
+  background-color: var(--calendar-selected);
+  color: white;
+  font-weight: 600;
+}
+
+.rdp-custom .rdp-range_middle {
+  background-color: var(--calendar-range-middle);
+  color: var(--calendar-range-text);
 }
