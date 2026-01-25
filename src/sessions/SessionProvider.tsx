@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { SessionUser } from './session.types';
+import type {SessionContextType, SessionUser} from './session.types';
 import { sessionService } from '../services/sessionService';
 import { SessionContext } from "./sessionContext";
 
 export function SessionProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<SessionUser | null>(null);
+    const [student, setStudent] = useState<SessionUser | null>(null);
 
     const refresh = async () => {
         setLoading(true);
@@ -14,7 +14,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             const auth = await sessionService.getAuthMe();
             const student = await sessionService.getStudentProfile();
 
-            setUser({
+            setStudent({
                 id: student.id,
                 email: student.email,
                 name: student.fullName || auth.fullName || 'Estudiante',
@@ -36,13 +36,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         sessionService.logoutFederated(redirect);
     };
 
-    const value = useMemo(() => ({
+    const value: SessionContextType = useMemo(() => ({
         loading,
-        isAuthenticated: !!user,
-        user,
+        isAuthenticated: !!student,
+        student,
         refresh,
         logout,
-    }), [loading, user]);
+    }), [loading, student]);
 
     return (
         <SessionContext.Provider value={value}>
