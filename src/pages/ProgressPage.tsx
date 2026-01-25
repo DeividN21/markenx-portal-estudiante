@@ -163,7 +163,7 @@ export const ProgressPage = () => {
                           ? "bg-yellow-100 text-yellow-700 border-yellow-200"
                           : "bg-red-100 text-red-700 border-red-200"
                       )}>
-                        {attempt.outcome}
+                        {attempt.outcome === 'WIN' ? 'GANASTE' : attempt.outcome === 'LOSE' ? 'PERDISTE' : attempt.outcome}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
