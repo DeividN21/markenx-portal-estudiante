@@ -8,6 +8,7 @@ interface TaskServiceDTO {
     currentAttempt: number;
     maxAttempts: number;
     remainingAttempts: number;
+    scenarioId: string;
 }
 
 type TaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'OUTDATED';

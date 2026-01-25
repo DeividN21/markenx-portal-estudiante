@@ -1,34 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { XCircle, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
-import { useSession } from '../sessions/sessionProvider.tsx';
 import { studentService } from '../services/studentService';
 import { gameTokenService } from '../services/gameTokenService';
 import { env } from '../config/env';
-import type { Task } from '../types';
+import {useSession} from "../sessions/useSession.ts";
+import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
 
-/**
- * GamePage - Pagina que embebe el juego Unity WebGL
- *
- * Implementa la Opcion A (iframe) de la documentacion de integracion.
- *
- * Flujo:
- * 1. Obtiene taskId de la URL (React Router)
- * 2. Obtiene studentId del contexto de sesion
- * 3. Obtiene scenarioId de la API (GET /tasks/{taskId})
- * 4. Obtiene gameToken del BFF (POST /auth/game-token)
- * 5. Construye URL del juego con Query Parameters (incluyendo token)
- * 6. Carga el juego en un iframe
- *
- * El gameToken permite que Unity se autentique con el BFF
- * sin depender de cookies de sesion (que no funcionan en iframes).
- */
 export const GamePage = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
-  const { user } = useSession();
+  const { student } = useSession();
 
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<TaskServiceDTO | null>(null);
   const [gameToken, setGameToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [tokenLoading, setTokenLoading] = useState(true);
@@ -37,7 +21,7 @@ export const GamePage = () => {
 
   // Cargar datos de la tarea para obtener scenarioId
   useEffect(() => {
-    const loadTask = async () => {
+    const run = async () => {
       if (!taskId) {
         setError('No se proporciono ID de tarea');
         setLoading(false);
@@ -46,8 +30,8 @@ export const GamePage = () => {
 
       try {
         setLoading(true);
-        const foundTask = await studentService.getStudentTask(taskId);
-        setTask(foundTask);
+        const task = await studentService.getStudentTask(taskId);
+        setTask(task);
       } catch (err) {
         console.error('Error cargando tarea:', err);
         setError('Error al cargar la informacion de la tarea');
@@ -56,10 +40,10 @@ export const GamePage = () => {
       }
     };
 
-    loadTask();
+    void run();
   }, [taskId]);
 
-  // Obtener token de autenticacion para Unity
+  // Obtener token de autenticación para Unity
   useEffect(() => {
     const fetchGameToken = async () => {
       try {
@@ -76,15 +60,15 @@ export const GamePage = () => {
     };
 
     // Solo obtener token si hay usuario autenticado
-    if (user?.id) {
-      fetchGameToken();
+    if (student?.id) {
+      void fetchGameToken();
     }
-  }, [user?.id]);
+  }, [student?.id]);
 
   // Construir URL del juego con Query Parameters
   const gameUrl = useMemo(() => {
     // Requiere: taskId, userId, y gameToken
-    if (!taskId || !user?.id || !gameToken) return null;
+    if (!taskId || !student?.id || !gameToken) return null;
 
     const params = new URLSearchParams();
 
@@ -92,8 +76,8 @@ export const GamePage = () => {
     const scenarioId = task?.scenarioId || taskId;
     params.set('scenarioId', scenarioId);
 
-    // studentId: del contexto de sesion
-    params.set('studentId', user.id);
+    // studentId: del contexto de sesión
+    params.set('studentId', student.id);
 
     // taskId: de la URL
     params.set('taskId', taskId);
@@ -102,13 +86,13 @@ export const GamePage = () => {
     const apiBaseUrl = env.API_BASE_URL.replace('/api/v1', '');
     params.set('apiUrl', apiBaseUrl);
 
-    // gameToken: token JWT temporal para autenticacion
+    // gameToken: token JWT temporal para autenticación
     params.set('gameToken', gameToken);
 
     // Construir URL final
     const baseGameUrl = env.GAME_URL;
     return `${baseGameUrl}?${params.toString()}`;
-  }, [taskId, user?.id, task?.scenarioId, gameToken]);
+  }, [taskId, student?.id, task?.scenarioId, gameToken]);
 
   // Manejar cuando el iframe carga
   const handleIframeLoad = () => {
@@ -141,7 +125,7 @@ export const GamePage = () => {
     );
   }
 
-  if (!user) {
+  if (!student) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-8rem)] text-gray-500">
         <Loader2 size={48} className="animate-spin text-brand-primary mb-4" />
