@@ -20,7 +20,7 @@ const studentServiceMock = {
 
     getStudentTask: async (taskId: string): Promise<TaskServiceDTO> => {
         return mockTasks.find(task => task.id === taskId) || {
-            id: "84e1be90-0cd0-459f-b976-11ccb1fb74fe",
+            id: taskId,
             title: "Tarea de prueba",
             summary: "Pulsa Iniciar Misión para empezar...",
             deadline: "2026-02-10T18:00:00",
