@@ -1,38 +1,39 @@
 import { useState, useEffect } from 'react';
 import { Trophy, TrendingUp, AlertCircle, Calendar, Loader2 } from 'lucide-react';
-import { useSession } from '../sessions/sessionProvider.tsx';
 import { studentService } from '../services/studentService';
-import type { Attempt } from '../types';
 import clsx from 'clsx';
+import {useSession} from "../sessions/useSession.ts";
+import type {AttemptServiceDTO} from "../models/dtos/AttemptServiceDTO.ts";
 
 export const ProgressPage = () => {
-  const { user } = useSession();
-  const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const { student } = useSession();
+  const [attempts, setAttempts] = useState<AttemptServiceDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user?.id) return;
+    const run = async () => {
+      setLoading(true);
+      setError(null);
 
-    setLoading(true);
-    setError(null);
-
-    studentService.getStudentAttempts(user.id)
-      .then(data => {
-        setAttempts(data);
-      })
-      .catch(err => {
-        console.error('Error al obtener intentos:', err);
-        setError('No se pudieron cargar los intentos.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [user?.id]);
+      studentService.getStudentAttempts(student?.id)
+        .then(attempts => {
+          setAttempts(attempts);
+        })
+        .catch(err => {
+          console.error('Error al obtener intentos:', err);
+          setError('No se pudieron cargar los intentos.');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+    void run();
+  }, [student?.id]);
 
   // Cálculos para las tarjetas de resumen
   const totalGames = attempts.length;
-  const wins = attempts.filter(a => a.outcome === 'GANASTE').length;
+  const wins = attempts.filter(a => a.outcome === 'WIN').length;
   const avgScore = totalGames > 0
     ? (attempts.reduce((acc, curr) => acc + curr.score, 0) / totalGames) * 100
     : 0;
@@ -126,12 +127,12 @@ export const ProgressPage = () => {
                 {attempts.map((attempt) => (
                   <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-slate-900">
-                      {attempt.taskTitle || `Tarea ${attempt.taskId.slice(0, 8)}...`}
+                      {attempt.taskId || `Tarea ${attempt.taskId.slice(0, 8)}...`}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Calendar size={14} className="text-gray-400" />
-                        {new Date(attempt.date).toLocaleDateString()}
+                        {new Date(attempt.startedAt).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
