@@ -33,7 +33,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             console.log('[SessionContext] auth response:', auth);
 
             // 2) Dominio: studentId + courseId (recomendado que venga aquí)
-            const student = await sessionService.getStudentMe();
+            const student = await sessionService.getStudentProfile();
             console.log('[SessionContext] student response:', student);
 
             // 3) Curso (nombre visible en Header)

@@ -2,7 +2,7 @@ import type {StudentServiceDTO} from "../models/dtos/StudentServiceDTO.ts";
 import type {TaskServiceDTO} from "../models/dtos/TaskServiceDTO.ts";
 
 const studentServiceMock = {
-    getStudentMe: async (): Promise<StudentServiceDTO> => {
+    getStudentProfile: async (): Promise<StudentServiceDTO> => {
         return {
             id: "15bbf1b8-3c59-462d-a59a-9b2bfa0d771c",
             email: "student.example@udla.edu.ec",

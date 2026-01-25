@@ -13,8 +13,8 @@ const sessionService = {
         return apiClient.request<SessionServiceDTO>('/auth/me', { method: 'GET' });
     },
 
-    getStudentMe: async (): Promise<StudentServiceDTO> => {
-        if (USE_MOCK) return studentServiceMock.getStudentMe();
+    getStudentProfile: async (): Promise<StudentServiceDTO> => {
+        if (USE_MOCK) return studentServiceMock.getStudentProfile();
         return apiClient.request<StudentServiceDTO>('/students/me', { method: 'GET' });
     },
 
