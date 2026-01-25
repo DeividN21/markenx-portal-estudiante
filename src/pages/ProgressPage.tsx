@@ -1,15 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Trophy, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
 import { studentService } from '../services/studentService';
 import clsx from 'clsx';
 import {useSession} from "../sessions/useSession.ts";
 import type {AttemptServiceDTO} from "../models/dtos/AttemptServiceDTO.ts";
+import { ProgressFilters } from '../components/ui/ProgressFilters';
 
 export const ProgressPage = () => {
   const { student } = useSession();
   const [attempts, setAttempts] = useState<AttemptServiceDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Estados temporales para los filtros (lo que el usuario edita)
+  const [outcomeFilter, setOutcomeFilter] = useState('');
+  const [dateFromFilter, setDateFromFilter] = useState('');
+  const [dateToFilter, setDateToFilter] = useState('');
+
+  // Estados aplicados (se actualizan al pulsar Buscar)
+  const [appliedOutcomeFilter, setAppliedOutcomeFilter] = useState('');
+  const [appliedDateFromFilter, setAppliedDateFromFilter] = useState('');
+  const [appliedDateToFilter, setAppliedDateToFilter] = useState('');
 
   useEffect(() => {
     const run = async () => {
@@ -31,11 +42,51 @@ export const ProgressPage = () => {
     void run();
   }, [student?.id]);
 
-  // Cálculos para las tarjetas de resumen
-  const totalGames = attempts.length;
-  const wins = attempts.filter(a => a.outcome === 'WIN').length;
+  // Filtrar intentos
+  const filteredAttempts = useMemo(() => {
+    return attempts.filter(attempt => {
+      // Filtro por resultado
+      if (appliedOutcomeFilter && attempt.outcome !== appliedOutcomeFilter) {
+        return false;
+      }
+
+      // Filtro por rango de fechas (fecha de inicio)
+      if (appliedDateFromFilter || appliedDateToFilter) {
+        const attemptDate = new Date(attempt.startedAt).toISOString().split('T')[0];
+        
+        if (appliedDateFromFilter && attemptDate < appliedDateFromFilter) {
+          return false;
+        }
+        
+        if (appliedDateToFilter && attemptDate > appliedDateToFilter) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [attempts, appliedOutcomeFilter, appliedDateFromFilter, appliedDateToFilter]);
+
+  const handleSearch = () => {
+    setAppliedOutcomeFilter(outcomeFilter);
+    setAppliedDateFromFilter(dateFromFilter);
+    setAppliedDateToFilter(dateToFilter);
+  };
+
+  const handleClearFilters = () => {
+    setOutcomeFilter('');
+    setDateFromFilter('');
+    setDateToFilter('');
+    setAppliedOutcomeFilter('');
+    setAppliedDateFromFilter('');
+    setAppliedDateToFilter('');
+  };
+
+  // Cálculos para las tarjetas de resumen (usan intentos filtrados)
+  const totalGames = filteredAttempts.length;
+  const wins = filteredAttempts.filter(a => a.outcome === 'WIN').length;
   const avgScore = totalGames > 0
-    ? (attempts.reduce((acc, curr) => acc + curr.score, 0) / totalGames) * 100
+    ? (filteredAttempts.reduce((acc, curr) => acc + curr.score, 0) / totalGames) * 100
     : 0;
 
   if (loading) {
@@ -66,6 +117,18 @@ export const ProgressPage = () => {
           Historial de partidas y métricas de desempeño.
         </p>
       </div>
+
+      {/* FILTROS */}
+      <ProgressFilters
+        outcomeFilter={outcomeFilter}
+        setOutcomeFilter={setOutcomeFilter}
+        dateFromFilter={dateFromFilter}
+        setDateFromFilter={setDateFromFilter}
+        dateToFilter={dateToFilter}
+        setDateToFilter={setDateToFilter}
+        onSearch={handleSearch}
+        onClearFilters={handleClearFilters}
+      />
 
       {/* TARJETAS DE RESUMEN (KPIs) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -106,11 +169,27 @@ export const ProgressPage = () => {
           <h3 className="font-bold text-slate-700">Historial de Intentos</h3>
         </div>
 
-        {attempts.length === 0 ? (
+        {filteredAttempts.length === 0 ? (
           <div className="px-6 py-12 text-center text-gray-500">
             <Trophy className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p>No tienes intentos registrados aún.</p>
-            <p className="text-sm">Completa tu primera misión para ver tu progreso aquí.</p>
+            {attempts.length === 0 ? (
+              <>
+                <p>No tienes intentos registrados aún.</p>
+                <p className="text-sm">Completa tu primera misión para ver tu progreso aquí.</p>
+              </>
+            ) : (
+              <>
+                <p>No se encontraron intentos con estos criterios.</p>
+                {(appliedOutcomeFilter || appliedDateFromFilter || appliedDateToFilter) && (
+                  <button
+                    onClick={handleClearFilters}
+                    className="mt-4 text-brand-primary hover:underline text-sm font-bold"
+                  >
+                    Limpiar filtros
+                  </button>
+                )}
+              </>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -125,7 +204,7 @@ export const ProgressPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {attempts.map((attempt) => (
+                {filteredAttempts.map((attempt) => (
                   <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-slate-900">
                       {attempt.taskId || `Tarea ${attempt.taskId.slice(0, 8)}...`}
