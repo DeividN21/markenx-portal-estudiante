@@ -5,8 +5,9 @@ import { ProgressPage } from './pages/ProgressPage';
 import { TaskDetailPage } from './pages/TaskDetailPage';
 import { GamePage } from './pages/GamePage';
 import { LoggedOutPage } from './pages/LoggedOutPage';
+import { MetricsPage } from './pages/MetricsPage';
 import {useSession} from "./sessions/useSession.ts";
-import { SessionProvider } from "./sessions/sessionProvider.tsx";
+import {SessionProvider} from "./sessions/SessionProvider.tsx";
 
 /**
  * RequireSession
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/tasks/:taskId" element={<TaskDetailPage />} />
                 <Route path="/game/:taskId" element={<GamePage />} />
                 <Route path="/progress" element={<ProgressPage />} />
+                <Route path="/metrics/:attemptId" element={<MetricsPage />} />
               </Route>
             </Route>
 

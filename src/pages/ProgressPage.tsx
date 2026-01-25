@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Trophy, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
 import { studentService } from '../services/studentService';
 import clsx from 'clsx';
@@ -8,6 +9,7 @@ import { ProgressFilters } from '../components/ui/ProgressFilters';
 
 export const ProgressPage = () => {
   const { student } = useSession();
+  const navigate = useNavigate();
   const [attempts, setAttempts] = useState<AttemptServiceDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -205,8 +207,12 @@ export const ProgressPage = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredAttempts.map((attempt) => (
-                  <tr key={attempt.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-900">
+                  <tr 
+                    key={attempt.id} 
+                    onClick={() => navigate(`/metrics/${attempt.id}`)}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer group"
+                  >
+                    <td className="px-6 py-4 font-medium text-slate-900 group-hover:text-brand-primary transition-colors">
                       {attempt.taskId || `Tarea ${attempt.taskId.slice(0, 8)}...`}
                     </td>
                     <td className="px-6 py-4 text-gray-700">
