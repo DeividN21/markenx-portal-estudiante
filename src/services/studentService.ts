@@ -11,7 +11,7 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 export const studentService = {
 
   getStudentTask: async (studentId: string, taskId: string): Promise<TaskServiceDTO> => {
-    if (USE_MOCK) return studentServiceMock.getTaskById();
+    if (USE_MOCK) return studentServiceMock.getStudentTask(taskId);
     return await apiClient.request<TaskServiceDTO>(
         `/students/${studentId}/tasks/${taskId}/progress`, { method: 'GET' }
     );
