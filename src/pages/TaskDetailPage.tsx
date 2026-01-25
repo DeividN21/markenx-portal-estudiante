@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, RefreshCw, Trophy, Play, AlertCircle } from 'lucide-react';
-import { useSession } from '../context/sessionContext';
+import { useSession } from '../sessions/sessionContext';
 import { studentService } from '../services/studentService';
 import { Badge } from '../components/ui/Badge';
 import type { Task, TaskDetail, TaskSummary } from '../types';

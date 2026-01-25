@@ -1,5 +1,5 @@
 import { LogOut, User as UserIcon } from 'lucide-react';
-import { useSession } from '../../context/sessionContext';
+import { useSession } from '../../sessions/sessionContext';
 
 export const Header = () => {
   const { user, logout } = useSession();

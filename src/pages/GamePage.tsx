@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { XCircle, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
-import { useSession } from '../context/sessionContext';
+import { useSession } from '../sessions/sessionContext';
 import { studentService } from '../services/studentService';
 import { gameTokenService } from '../services/gameTokenService';
 import { env } from '../config/env';

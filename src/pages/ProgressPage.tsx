@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trophy, TrendingUp, AlertCircle, Calendar, Loader2 } from 'lucide-react';
-import { useSession } from '../context/sessionContext';
+import { useSession } from '../sessions/sessionContext';
 import { studentService } from '../services/studentService';
 import type { Attempt } from '../types';
 import clsx from 'clsx';

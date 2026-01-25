@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { SessionProvider, useSession } from './context/sessionContext';
+import { SessionProvider, useSession } from './sessions/sessionContext';
 import { MainLayout } from './components/layout/MainLayout';
 
 // Páginas
