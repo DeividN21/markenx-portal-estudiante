@@ -1,0 +1,7 @@
+const env = {
+    API_BASE_URL: import.meta.env.VITE_API_URL ?? "http://localhost:8080/api/v1",
+    APP_NAME: import.meta.env.VITE_APP_NAME ?? "markenx-student-ui",
+    GAME_URL: import.meta.env.VITE_GAME_URL ?? "/game/index.html",
+};
+
+export { env }

@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# MarkenX - Portal del Estudiante 🎮
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este repositorio contiene el **Frontend Gamificado** para los estudiantes de **MarkenX**. A diferencia del portal administrativo, este proyecto utiliza **React + Tailwind CSS** para ofrecer una experiencia visual inmersiva, moderna y ágil, similar a una plataforma de videojuegos.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Core:** React (v18) + TypeScript
+- **Build Tool:** Vite (Ultra rápido)
+- **Estilos:** Tailwind CSS (Diseño Utility-first)
+- **Navegación:** React Router DOM v6
+- **Iconos:** Lucide React
+- **Arquitectura:** Service Layer Pattern (Mock vs Real API)
 
-## React Compiler
+## ✨ Características Implementadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1.  **Experiencia Gamificada:**
+    - Login con diseño inmersivo.
+    - Interfaz basada en Tarjetas (Cards) y Badges visuales.
+    - Feedback visual de estados (Vencida, Completada, Habilitada).
 
-## Expanding the ESLint configuration
+2.  **Gestión de Misiones (Tareas):**
+    - Filtrado dinámico por estado y fecha.
+    - Diferenciación visual entre **Asignaciones** (prácticas) y **Evaluaciones** (intento único).
+    - Detalle de misión con métricas claras antes de iniciar.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+3.  **Lanzador de Juego:**
+    - Integración preparada para incrustar el videojuego (Unity WebGL).
+    - Modo "Pantalla Completa" dentro del layout persistente.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+4.  **Monitor de Progreso:**
+    - Dashboard personal con KPIs (Victorias, Promedio, Partidas).
+    - Historial detallado de intentos y resultados.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Instalación y Ejecución
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/TU_USUARIO/markenx-portal-estudiante.git](https://github.com/TU_USUARIO/markenx-portal-estudiante.git)
+    cd markenx-portal-estudiante
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3.  **Ejecutar en modo desarrollo:**
+    ```bash
+    npm run dev
+    ```
+    El portal estará disponible en `http://localhost:5173`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## ⚙️ Configuración de Entorno (Mock vs Real)
+
+El proyecto cuenta con una capa de servicios inteligente que permite trabajar sin backend o conectarse a la API real cambiando una sola línea.
+
+- Revisa el archivo `.env` en la raíz:
+  - `VITE_USE_MOCK=true`: Usa datos por default (Ideal para diseño/frontend).
+  - `VITE_USE_MOCK=false`: Conecta con Spring Boot y Keycloak.
+
+> 📘 **Para Backend:**
+> Consultar la carpeta `/docs` para ver la guía de integración detallada y los contratos de datos esperados.
