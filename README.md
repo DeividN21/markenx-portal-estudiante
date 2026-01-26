@@ -55,7 +55,7 @@ Este repositorio contiene el **Frontend Gamificado** para los estudiantes de **M
 El proyecto cuenta con una capa de servicios inteligente que permite trabajar sin backend o conectarse a la API real cambiando una sola línea.
 
 - Revisa el archivo `.env` en la raíz:
-  - `VITE_USE_MOCK=true`: Usa datos falsos (Ideal para diseño/frontend).
+  - `VITE_USE_MOCK=true`: Usa datos por default (Ideal para diseño/frontend).
   - `VITE_USE_MOCK=false`: Conecta con Spring Boot y Keycloak.
 
 > 📘 **Para Backend:**
